@@ -65,7 +65,7 @@ def coord_fn_from_cell_index(x,y,runid):
     return '_'.join([hexx,hexy,runid]), '_'.join([hexx,hexy])
 
    
-def max_runid_range(M, N, minM, minN, runid):
+def max_runid_range(M, N, minM, minN, runid, r):
 
     new_fn = []
     for i in xrange(M/r):
@@ -76,10 +76,10 @@ def max_runid_range(M, N, minM, minN, runid):
 
 
 # First check of the size of the current runid
-def runid_size(fn_list):
+def runid_size(fn_list,r,x_offset,y_offset):
 
     # iterate each cell
-    mn = [read_fn(fn) for fn in fn_list]
+    mn = [read_fn(fn,r,x_offset,y_offset) for fn in fn_list]
 
     minM, minN = np.min(mn, axis=0)
     maxM, maxN = np.max(mn, axis=0)

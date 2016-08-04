@@ -3,11 +3,29 @@ import numpy as np
 from tool import mergecloud
 from read import read_bin_resmapling, rasterize, read_ascii_xyz
 
+from lib.ply import read_bin_xyz_norm_scale, read_bin, read_bin_double
 
 geoid = 42.9664
 sigma_geoid = 0.4
 
+
+def load_aligned_data(fn, pointcloud_path, ref_out_dir, mm, nn, geoid, sigma_geoid):
+
+    data_ref = np.array(read_bin(ref_out_dir + fn, 7))
+
+    # Height range of the point cloud
+    height_max, height_min = max(data_ref[:,2]) + geoid + sigma_geoid, min(data_ref[:,2]) + geoid - sigma_geoid
+
+    del data_ref
     
+    data_mms = read_bin_xyz_norm_scale(pointcloud_path + fn, 13)
+    data_mms = np.array(data_mms)[:,0:3] - [mm,nn,0]
+
+    data_mms = data_mms[(data_mms[:,2] > height_min) * (data_mms[:,2]< height_max)]
+
+    return data_mms
+
+
 def load_data(fn_mms, r, in_dir_ref, res_ref):
 
     cell_id = fn_mms.split('\\')[-1][:17]
