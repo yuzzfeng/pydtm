@@ -11,19 +11,53 @@ from cell2world import coord, read_cellname
 #######################################################################
 
 
+def local_to_UTM_core(fn, args):
 
-def local_to_UTM(ground_filtering_out_dir, geo_ground_filtering_out_dir, z_offset, r, x_offset, y_offset):       
+    ground_filtering_out_dir, geo_ground_filtering_out_dir, update_dir, list_update, r, x_offset, y_offset, z_offset = args
+
+    m,n = fn[:17].split('_')
+    [mm,nn] = coord(m, n, r, x_offset, y_offset)
+
+    data = read_bin(ground_filtering_out_dir + fn, 7)
+    data_mms = np.array(data) + [mm, nn, -z_offset]
+
+    if fn in list_update:
+        data_update = np.array(read_bin(update_dir + fn, 7))
+        if len(data_update)>0:
+            data_mms = mergecloud(data_mms, data_update + [mm, nn, 0])
+
+    write_points_double(data_mms,  geo_ground_filtering_out_dir + fn)
+
+    return True
+
+
+def local_to_UTM_star(a_b):
+    return local_to_UTM_core(*a_b)
+
+
+def local_to_UTM(ground_filtering_out_dir, geo_ground_filtering_out_dir, update_dir, z_offset, r, x_offset, y_offset):       
+
     list_pointcloud_filtered = os.listdir(ground_filtering_out_dir)
+    list_update = os.listdir(update_dir)
 
-    for fn in list_pointcloud_filtered:
+    args = ground_filtering_out_dir, geo_ground_filtering_out_dir, update_dir, list_update, r, x_offset, y_offset, z_offset
 
-        m,n = fn[:17].split('_')
-        [mm,nn] = coord(m, n, r, x_offset, y_offset)
+##    for fn in list_pointcloud_filtered:
+##        print fn
+##        local_to_UTM_star(fn, args)
+        
+    # Multiprocessing
+    from multiprocessing import Pool
+    from itertools import izip
+    from itertools import repeat
 
-        data = read_bin(ground_filtering_out_dir + fn, 7)
-        data_mms = np.array(data) + [mm, nn, -z_offset]
-        write_points_double(data_mms,  geo_ground_filtering_out_dir + fn)
-        print fn 
+    ## 6 Cores
+    p = Pool(6)
+    result = p.map(local_to_UTM_star, zip(list_pointcloud_filtered, repeat(args)))
+    p.close()
+    p.join()
+
+    return result
 
 
 
