@@ -67,7 +67,7 @@ pointcloud_path = 'X:\\Proc\\ricklingen_yu\\map\\'
 ##ground_filtering_out_dir = 'C:\\temp\\aligned_GF\\'
 ground_filtering_out_dir = 'C:\\temp\\aligned_GF_04082016\\'
 
-geo_ground_filtering_out_dir = 'C:\\temp\\aligned_GF_georefrenced\\'
+
 
 
 list_pointcloud = os.listdir(pointcloud_path)
@@ -94,6 +94,9 @@ if __name__ == "__main__":
 
 ##    print search_index(list_pointcloud, '0000004f_fffffec2.ply'), len(list_pointcloud)
 
+    from lib.diff import calc_diff
+    list_shift_value, list_shift_img = calc_diff(list_pointcloud_filtered, ground_filtering_out_dir, ref_out_dir, res_ref, r)
+
 ##    list_shift_value = []
 ##    list_shift_img = dict()
 ##
@@ -102,44 +105,40 @@ if __name__ == "__main__":
 ##            data_mms = read_bin(ground_filtering_out_dir + fn, 7)
 ##            data_ref = read_bin(ref_out_dir + fn, 7)
 ##
-##            d_ref = rasterize(data_ref, 0.5, dim = 2)
+##            d_ref = rasterize(data_ref, res_ref, dim = 2)
 ##            
-##            shift_value, shift_img = shiftvalue(np.array(data_mms), 0.5, np.array(data_ref), d_ref, 1., 15)
-##
-##    ##        plot_img(shift_img - shift_value)
-##    ##        plt.show()
+##            shift_value, shift_img = shiftvalue(np.array(data_mms), res_ref, np.array(data_ref), d_ref, 1., r)
 ##            
 ##            list_shift_value.append(shift_value)
 ##            list_shift_img[fn] = shift_img
 ##        else:
 ##            print fn
-##
-##
-##    if 1:
-##        ind = reject_outliers(list_shift_value, 5)
-##
-##        list_shift_value = np.array(list_shift_value)
-##        hist, bins = np.histogram(list_shift_value[ind], bins=100)
-##        
-##        shift = np.median(list_shift_value[ind])
-##        plt.plot(bins[:-1], hist)
-##        plt.show()
-##
-##    print shift
-##    minM, minN, lenM, lenN = get_range_from_fn_list(list_shift_img.keys(), r,x_offset,y_offset)
-##
-##    if 1:
-##        img = np.zeros((lenN, lenM))
-##        i = 0
-##        for fn in list_shift_img.keys():
-##            if ind[i]: 
-##                x,y = read_fn(fn[:17], r, x_offset, y_offset)
-##                img[lenN -1  - (y-minN)/r, (x-minM)/r] = list_shift_value[i] - shift
-##            i = i + 1
-##
-##        plot_img(img)
-##        plt.show()
-##
+
+    if 1:
+        ind = reject_outliers(list_shift_value, 5)
+
+        list_shift_value = np.array(list_shift_value)
+        hist, bins = np.histogram(list_shift_value[ind], bins=100)
+        
+        shift = np.median(list_shift_value[ind])
+        plt.plot(bins[:-1], hist)
+        plt.show()
+
+    print shift
+    minM, minN, lenM, lenN = get_range_from_fn_list(list_shift_img.keys(), r,x_offset,y_offset)
+
+    if 1:
+        img = np.zeros((lenN, lenM))
+        i = 0
+        for fn in list_shift_img.keys():
+            if ind[i]: 
+                x,y = read_fn(fn[:17], r, x_offset, y_offset)
+                img[lenN -1  - (y-minN)/r, (x-minM)/r] = list_shift_value[i] - shift
+            i = i + 1
+
+        plot_img(img)
+        plt.show()
+
 ##    print np.std(list_shift_value[ind] - shift), np.max(list_shift_value[ind] - shift), np.min(list_shift_value[ind] - shift)
 ##
 ##    # nonvalue
@@ -148,7 +147,7 @@ if __name__ == "__main__":
 ##    radius = 1
 ##
 ##    
-##    for fn in list_shift_img.keys()[0:40]:
+##    for fn in list_shift_img.keys():
 ##
 ##        img = list_shift_img[fn] - shift
 ##        single_len = img.shape[0]
@@ -223,28 +222,29 @@ if __name__ == "__main__":
 ##
 ##                check_and_create(ref_update_dir + fn_not)
 ##                write_points(data_output, ref_update_dir + fn_not +'//' +fn_not + '_from_' + fn)
-##
-####                plot_img(update)
-####        plot_img(boundbuffer)
-####        plot_img(filtered)
-####        plot_img(img)
-####        plt.show()
+
+##                plot_img(update)
+##        plot_img(boundbuffer)
+##        plot_img(filtered)
+##        plot_img(img)
+##        plt.show()
 
 
 
     
-    shift = 42.9316920581
-    final_dir = 'C:\\temp\\aligned_final\\'
-    rest_dir = 'C:\\temp\\aligned_rest\\'
-
-    # Process the mms and update of ref together 
-    local_to_UTM(ground_filtering_out_dir, geo_ground_filtering_out_dir, ref_cut_dir, shift, r, x_offset, y_offset)
-
-    # Process the update ref and combine the duplicated ones
-    local_to_UTM_update_ref(ref_update_dir, final_dir, r, x_offset, y_offset)
-
-    # Process the rest of tiles into UTM32 global coordinate system
-    list_rest = list(set(list_pointcloud_ref) - set(os.listdir(final_dir)) - set(os.listdir(geo_ground_filtering_out_dir)))
-    local_to_UTM_rest_ref(list_rest, ref_out_dir, rest_dir, r, x_offset, y_offset)
-
+##    shift = 42.9316920581
+##    geo_ground_filtering_out_dir = 'C:\\temp\\aligned_a\\'
+##    final_dir = 'C:\\temp\\aligned_b\\'
+##    rest_dir = 'C:\\temp\\aligned_c\\'
+##
+##    # Process the mms and update of ref together 
+##    local_to_UTM(ground_filtering_out_dir, geo_ground_filtering_out_dir, ref_cut_dir, shift, r, x_offset, y_offset)
+##
+##    # Process the update ref and combine the duplicated ones
+##    local_to_UTM_update_ref(ref_update_dir, final_dir, r, x_offset, y_offset)
+##
+##    # Process the rest of tiles into UTM32 global coordinate system
+##    list_rest = list(set(list_pointcloud_ref) - set(os.listdir(final_dir)) - set(os.listdir(geo_ground_filtering_out_dir)))
+##    local_to_UTM_rest_ref(list_rest, ref_out_dir, rest_dir, r, x_offset, y_offset)
+##
     

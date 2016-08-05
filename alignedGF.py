@@ -58,7 +58,7 @@ def ground_filter_multicore(list_pointcloud, args):
 if __name__ == "__main__":
 
     geoid = 42.9664
-    sigma_geoid = 0.5
+    sigma_geoid = 0.6
 
     x_offset = 548495 + 5
     y_offset = 5804458 + 42
