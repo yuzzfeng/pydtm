@@ -12,7 +12,7 @@ from lib.checkRunids import check_and_create
 from lib.load import load_aligned_data
 
 from lib.assemble import split_ref_to_tiles
-from lib.produceDTM import local_to_UTM
+from lib.produceDTM import local_to_UTM, local_to_UTM_update_ref, local_to_UTM_rest_ref
 
 
 from lib.cell2world import Hexa2Decimal, int2hex, coord_fn_from_cell_index
@@ -229,6 +229,22 @@ if __name__ == "__main__":
 ####        plot_img(filtered)
 ####        plot_img(img)
 ####        plt.show()
+
+
+
     
     shift = 42.9316920581
+    final_dir = 'C:\\temp\\aligned_final\\'
+    rest_dir = 'C:\\temp\\aligned_rest\\'
+
+    # Process the mms and update of ref together 
     local_to_UTM(ground_filtering_out_dir, geo_ground_filtering_out_dir, ref_cut_dir, shift, r, x_offset, y_offset)
+
+    # Process the update ref and combine the duplicated ones
+    local_to_UTM_update_ref(ref_update_dir, final_dir, r, x_offset, y_offset)
+
+    # Process the rest of tiles into UTM32 global coordinate system
+    list_rest = list(set(list_pointcloud_ref) - set(os.listdir(final_dir)) - set(os.listdir(geo_ground_filtering_out_dir)))
+    local_to_UTM_rest_ref(list_rest, ref_out_dir, rest_dir, r, x_offset, y_offset)
+
+    

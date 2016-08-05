@@ -1,6 +1,12 @@
 import os
 import numpy as np
 
+# Multiprocessing
+from multiprocessing import Pool
+from itertools import izip
+from itertools import repeat
+
+from read import rasterize
 from tool import mergecloud, read_ply
 from ply import write_points_double, read_bin
 from cell2world import coord, read_cellname
@@ -13,12 +19,12 @@ from cell2world import coord, read_cellname
 
 def local_to_UTM_core(fn, args):
 
-    ground_filtering_out_dir, geo_ground_filtering_out_dir, update_dir, list_update, r, x_offset, y_offset, z_offset = args
+    in_dir, out_dir, update_dir, list_update, r, x_offset, y_offset, z_offset = args
 
     m,n = fn[:17].split('_')
     [mm,nn] = coord(m, n, r, x_offset, y_offset)
 
-    data = read_bin(ground_filtering_out_dir + fn, 7)
+    data = read_bin(in_dir + fn, 7)
     data_mms = np.array(data) + [mm, nn, -z_offset]
 
     if fn in list_update:
@@ -26,7 +32,7 @@ def local_to_UTM_core(fn, args):
         if len(data_update)>0:
             data_mms = mergecloud(data_mms, data_update + [mm, nn, 0])
 
-    write_points_double(data_mms,  geo_ground_filtering_out_dir + fn)
+    write_points_double(data_mms,  out_dir + fn)
 
     return True
 
@@ -34,32 +40,108 @@ def local_to_UTM_core(fn, args):
 def local_to_UTM_star(a_b):
     return local_to_UTM_core(*a_b)
 
+def local_to_UTM(in_dir, out_dir, update_dir, z_offset, r, x_offset, y_offset):       
 
-def local_to_UTM(ground_filtering_out_dir, geo_ground_filtering_out_dir, update_dir, z_offset, r, x_offset, y_offset):       
-
-    list_pointcloud_filtered = os.listdir(ground_filtering_out_dir)
+    list_mms = os.listdir(in_dir)
     list_update = os.listdir(update_dir)
 
-    args = ground_filtering_out_dir, geo_ground_filtering_out_dir, update_dir, list_update, r, x_offset, y_offset, z_offset
-
-##    for fn in list_pointcloud_filtered:
-##        print fn
-##        local_to_UTM_star(fn, args)
+    args = in_dir, out_dir, update_dir, list_update, r, x_offset, y_offset, z_offset
         
-    # Multiprocessing
-    from multiprocessing import Pool
-    from itertools import izip
-    from itertools import repeat
+    ## 6 Cores
+    p = Pool(6)
+    result = p.map(local_to_UTM_star, zip(list_mms, repeat(args)))
+    p.close()
+    p.join()
+
+    return result
+
+#######################################################################
+
+def local_to_UTM_rest_ref_core(fn, args):
+
+    in_dir, out_dir, r, x_offset, y_offset = args
+
+    m,n = fn[:17].split('_')
+    [mm,nn] = coord(m, n, r, x_offset, y_offset)
+    
+    new_pointcloud = np.array(read_bin(in_dir + fn, 7))
+    write_points_double(np.array(new_pointcloud)+ [mm, nn, 0], out_dir + fn)
+
+    return True
+    
+def local_to_UTM_rest_ref_star(a_b):
+    return local_to_UTM_rest_ref_core(*a_b)
+
+def local_to_UTM_rest_ref(list_rest, in_dir, out_dir, r, x_offset, y_offset):
+
+    args = in_dir, out_dir, r, x_offset, y_offset
 
     ## 6 Cores
     p = Pool(6)
-    result = p.map(local_to_UTM_star, zip(list_pointcloud_filtered, repeat(args)))
+    result = p.map(local_to_UTM_rest_ref_star, zip(list_rest, repeat(args)))
     p.close()
     p.join()
 
     return result
 
 
+#######################################################################
+
+def local_to_UTM_update_ref_core(fn, args):
+
+    in_dir, out_dir, r, x_offset, y_offset = args
+
+    m,n = fn[:17].split('_')
+    [mm,nn] = coord(m, n, r, x_offset, y_offset)
+
+    list_duplicate = os.listdir(in_dir + fn)
+
+    if len(list_duplicate) == 1:
+
+        new_pointcloud = np.array(read_bin(in_dir + fn + '\\' + list_duplicate[0] ,7))
+        write_points_double(np.array(new_pointcloud)+ [mm, nn, 0], out_dir + fn)
+
+    else:
+
+        pointcloud = np.array([0,0,0])
+        for fn_under in list_duplicate:
+            pointcloud = mergecloud(pointcloud, np.array(read_bin(in_dir + fn + '//' + fn_under, 7)))
+
+        pointcloud = pointcloud[1:]
+        d = rasterize(pointcloud, 0.5, dim=2)
+
+        new_pointcloud = []
+        for key in d.keys():
+            new_pointcloud.append(np.mean(pointcloud[d[key]], axis = 0))
+        
+##            if np.std(pointcloud[d[key]][:,2])>0.1:
+##                print fn, np.std(pointcloud[d[key]][:,2]), np.mean( pointcloud[d[key]], axis = 0)
+
+        write_points_double(np.array(new_pointcloud)+ [mm, nn, 0], out_dir + fn)
+
+    
+def local_to_UTM_update_ref_star(a_b):
+    return local_to_UTM_update_ref_core(*a_b)
+
+
+def local_to_UTM_update_ref(in_dir, out_dir, r, x_offset, y_offset):
+    
+    list_ref_update = os.listdir(in_dir)
+
+    args = in_dir, out_dir, r, x_offset, y_offset
+
+    ## 6 Cores
+    p = Pool(6)
+    result = p.map(local_to_UTM_update_ref_star, zip(list_ref_update, repeat(args)))
+    p.close()
+    p.join()
+
+    return result
+
+
+    
+    
+#######################################################################
 
 def final_dtm(path_final, path_mms, path_ref, in_dir_ref):
 
