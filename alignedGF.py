@@ -64,6 +64,6 @@ if __name__ == "__main__":
     y_offset = 5804458 + 42
     r = 15
 
-    ground_filtering_out_dir = 'C:\\temp\\aligned_GF_04082016\\'
+    ground_filtering_out_dir = 'C:\\temp\\aligned_GF_05082016\\'
     args = [pointcloud_path, ground_filtering_out_dir, r, x_offset, y_offset, geoid, sigma_geoid]
     result = ground_filter_multicore(list_pointcloud, args)

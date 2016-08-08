@@ -65,7 +65,7 @@ ref_cut_dir = 'C:\\temp\\aligned_ref_update_cut\\'
 pointcloud_path = 'X:\\Proc\\ricklingen_yu\\map\\'
 
 ##ground_filtering_out_dir = 'C:\\temp\\aligned_GF\\'
-ground_filtering_out_dir = 'C:\\temp\\aligned_GF_04082016\\'
+ground_filtering_out_dir = 'C:\\temp\\aligned_GF_05082016\\'
 
 
 
@@ -97,23 +97,6 @@ if __name__ == "__main__":
     from lib.diff import calc_diff
     list_shift_value, list_shift_img = calc_diff(list_pointcloud_filtered, ground_filtering_out_dir, ref_out_dir, res_ref, r)
 
-##    list_shift_value = []
-##    list_shift_img = dict()
-##
-##    for fn in list_pointcloud_filtered:
-##        if fn in list_pointcloud_ref:
-##            data_mms = read_bin(ground_filtering_out_dir + fn, 7)
-##            data_ref = read_bin(ref_out_dir + fn, 7)
-##
-##            d_ref = rasterize(data_ref, res_ref, dim = 2)
-##            
-##            shift_value, shift_img = shiftvalue(np.array(data_mms), res_ref, np.array(data_ref), d_ref, 1., r)
-##            
-##            list_shift_value.append(shift_value)
-##            list_shift_img[fn] = shift_img
-##        else:
-##            print fn
-
     if 1:
         ind = reject_outliers(list_shift_value, 5)
 
@@ -122,7 +105,6 @@ if __name__ == "__main__":
         
         shift = np.median(list_shift_value[ind])
         plt.plot(bins[:-1], hist)
-        plt.show()
 
     print shift
     minM, minN, lenM, lenN = get_range_from_fn_list(list_shift_img.keys(), r,x_offset,y_offset)
@@ -139,89 +121,89 @@ if __name__ == "__main__":
         plot_img(img)
         plt.show()
 
-##    print np.std(list_shift_value[ind] - shift), np.max(list_shift_value[ind] - shift), np.min(list_shift_value[ind] - shift)
-##
-##    # nonvalue
-##    nonvalue = -999.0
-##    raster_size = 30
-##    radius = 1
-##
-##    
-##    for fn in list_shift_img.keys():
-##
-##        img = list_shift_img[fn] - shift
-##        single_len = img.shape[0]
-##        new_size = (2*radius + 1) * img.shape[0]
-##        neighbour = np.zeros((new_size, new_size))
-##        
-##        m,n = fn[:17].split('_')
-##
-##        int_m = Hexa2Decimal(m)
-##        int_n = Hexa2Decimal(n)
-##        combi = np.array(list((product(range(-radius,radius+1), range(-radius,radius+1)))))
-##        combi_global = combi + [int_m, int_n]
-##
-##        neigh_list = [coord_fn_from_cell_index(m,n,'')[1]+'.ply' for m,n in combi_global]
-##
-##        not_in_list = []
-##        for neigh, loc in zip(neigh_list,combi):
-##            if neigh in list_shift_img.keys():
-##                a,b = (loc + radius) * single_len
-##                neighbour[a:a+single_len, b:b+single_len] =  list_shift_img[neigh] - shift
-##            else:
-##                if neigh in list_pointcloud_ref:
-##                    a,b = (loc + radius) * single_len
-##                    not_in_list.append([neigh,(a,b)])
-##
-##        print fn, not_in_list
-##
-##                
-##        
-##
-##        img = neighbour
-##        
-##        img = np.nan_to_num(img)
-##        filtered, boundbuffer, mask = apply_gaussian(img, 0, 0, nonvalue, 'linear')
-##        boundbuffer = np.nan_to_num(boundbuffer)
-##
-##        a,b = (np.array([0,0]) + radius) * single_len
-##        update = boundbuffer[a:a+single_len, b:b+single_len]
-##        upmask = mask[a:a+single_len, b:b+single_len]
-##        data_ref = read_bin(ref_out_dir + fn, 7)
-##        d_ref = rasterize(data_ref, res_ref, dim=2)
-##        data_ref = np.array(data_ref)
-##
-##        raster_size = single_len
-##        data_output = []
-##        for i in xrange(0,raster_size):
-##            for j in xrange(0,raster_size):
-##                string = str.join('+',[str(i), str(j)])
-##                index = d_ref[string]
-##                if upmask[i,j] == 0:
-##                    data_output.append(data_ref[index][0] + [0,0,update[i,j]])
-##
-##        write_points(data_output, ref_cut_dir + fn)
-##        
-##
-##        for fn_not, (a,b) in not_in_list:
-##            
-##            update = boundbuffer[a:a+single_len, b:b+single_len]
-##            print np.sum(update)
-##            if abs(np.sum(update)) > 0.01:
-##                data_ref = read_bin(ref_out_dir + fn_not, 7)
-##                d_ref = rasterize(data_ref, res_ref, dim=2)
-##
-##                data_ref = np.array(data_ref)
-##
-##                data_output = []
-##                for i in xrange(0,raster_size):
-##                    for j in xrange(0,raster_size):
-##                        string = str.join('+',[str(i), str(j)])
-##                        index = d_ref[string]
-##                        data_output.append(data_ref[index][0] + [0,0,update[i,j]])
-##
-##                check_and_create(ref_update_dir + fn_not)
-##                write_points(data_output, ref_update_dir + fn_not +'//' +fn_not + '_from_' + fn)
+    print np.std(list_shift_value[ind] - shift), np.max(list_shift_value[ind] - shift), np.min(list_shift_value[ind] - shift)
+
+    # nonvalue
+    nonvalue = -999.0
+    raster_size = 30
+    radius = 1
+
+    
+    for fn in list_shift_img.keys():
+
+        img = list_shift_img[fn] - shift
+        single_len = img.shape[0]
+        new_size = (2*radius + 1) * img.shape[0]
+        neighbour = np.zeros((new_size, new_size))
+        
+        m,n = fn[:17].split('_')
+
+        int_m = Hexa2Decimal(m)
+        int_n = Hexa2Decimal(n)
+        combi = np.array(list((product(range(-radius,radius+1), range(-radius,radius+1)))))
+        combi_global = combi + [int_m, int_n]
+
+        neigh_list = [coord_fn_from_cell_index(m,n,'')[1]+'.ply' for m,n in combi_global]
+
+        not_in_list = []
+        for neigh, loc in zip(neigh_list,combi):
+            if neigh in list_shift_img.keys():
+                a,b = (loc + radius) * single_len
+                neighbour[a:a+single_len, b:b+single_len] =  list_shift_img[neigh] - shift
+            else:
+                if neigh in list_pointcloud_ref:
+                    a,b = (loc + radius) * single_len
+                    not_in_list.append([neigh,(a,b)])
+
+        print fn, not_in_list
+
+                
+        
+
+        img = neighbour
+        
+        img = np.nan_to_num(img)
+        filtered, boundbuffer, mask = apply_gaussian(img, 0, 0, nonvalue, 'linear')
+        boundbuffer = np.nan_to_num(boundbuffer)
+
+        a,b = (np.array([0,0]) + radius) * single_len
+        update = boundbuffer[a:a+single_len, b:b+single_len]
+        upmask = mask[a:a+single_len, b:b+single_len]
+        data_ref = read_bin(ref_out_dir + fn, 7)
+        d_ref = rasterize(data_ref, res_ref, dim=2)
+        data_ref = np.array(data_ref)
+
+        raster_size = single_len
+        data_output = []
+        for i in xrange(0,raster_size):
+            for j in xrange(0,raster_size):
+                string = str.join('+',[str(i), str(j)])
+                index = d_ref[string]
+                if upmask[i,j] == 0:
+                    data_output.append(data_ref[index][0] + [0,0,update[i,j]])
+
+        write_points(data_output, ref_cut_dir + fn)
+        
+
+        for fn_not, (a,b) in not_in_list:
+            
+            update = boundbuffer[a:a+single_len, b:b+single_len]
+            print np.sum(update)
+            if abs(np.sum(update)) > 0.01:
+                data_ref = read_bin(ref_out_dir + fn_not, 7)
+                d_ref = rasterize(data_ref, res_ref, dim=2)
+
+                data_ref = np.array(data_ref)
+
+                data_output = []
+                for i in xrange(0,raster_size):
+                    for j in xrange(0,raster_size):
+                        string = str.join('+',[str(i), str(j)])
+                        index = d_ref[string]
+                        data_output.append(data_ref[index][0] + [0,0,update[i,j]])
+
+                check_and_create(ref_update_dir + fn_not)
+                write_points(data_output, ref_update_dir + fn_not +'//' +fn_not + '_from_' + fn)
 
 ##                plot_img(update)
 ##        plot_img(boundbuffer)
@@ -233,18 +215,18 @@ if __name__ == "__main__":
 
     
 ##    shift = 42.9316920581
-##    geo_ground_filtering_out_dir = 'C:\\temp\\aligned_a\\'
-##    final_dir = 'C:\\temp\\aligned_b\\'
-##    rest_dir = 'C:\\temp\\aligned_c\\'
-##
-##    # Process the mms and update of ref together 
-##    local_to_UTM(ground_filtering_out_dir, geo_ground_filtering_out_dir, ref_cut_dir, shift, r, x_offset, y_offset)
-##
-##    # Process the update ref and combine the duplicated ones
-##    local_to_UTM_update_ref(ref_update_dir, final_dir, r, x_offset, y_offset)
-##
-##    # Process the rest of tiles into UTM32 global coordinate system
-##    list_rest = list(set(list_pointcloud_ref) - set(os.listdir(final_dir)) - set(os.listdir(geo_ground_filtering_out_dir)))
-##    local_to_UTM_rest_ref(list_rest, ref_out_dir, rest_dir, r, x_offset, y_offset)
-##
-    
+    geo_ground_filtering_out_dir = 'C:\\temp\\aligned_a\\'
+    final_dir = 'C:\\temp\\aligned_b\\'
+    rest_dir = 'C:\\temp\\aligned_c\\'
+
+    # Process the mms and update of ref together 
+    local_to_UTM(ground_filtering_out_dir, geo_ground_filtering_out_dir, ref_cut_dir, shift, r, x_offset, y_offset)
+
+    # Process the update ref and combine the duplicated ones
+    local_to_UTM_update_ref(ref_update_dir, final_dir, r, x_offset, y_offset)
+
+    # Process the rest of tiles into UTM32 global coordinate system
+    list_rest = list(set(list_pointcloud_ref) - set(os.listdir(final_dir)) - set(os.listdir(geo_ground_filtering_out_dir)))
+    local_to_UTM_rest_ref(list_rest, ref_out_dir, rest_dir, r, x_offset, y_offset)
+
+    print 'Process finished'
