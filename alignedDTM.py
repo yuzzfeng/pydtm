@@ -92,8 +92,6 @@ def calc_difference_mms_ref(fn, args):
 
 if __name__ == "__main__":
 
-##    print search_index(list_pointcloud, '0000004f_fffffec2.ply'), len(list_pointcloud)
-
     from lib.diff import calc_diff
     list_shift_value, list_shift_img = calc_diff(list_pointcloud_filtered, ground_filtering_out_dir, ref_out_dir, res_ref, r)
 
@@ -157,9 +155,7 @@ if __name__ == "__main__":
 
         print fn, not_in_list
 
-                
-        
-
+    
         img = neighbour
         
         img = np.nan_to_num(img)
