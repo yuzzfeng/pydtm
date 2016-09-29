@@ -13,20 +13,21 @@ import shutil
 def copytoDst(in_path, fn, out_path):
     shutil.copy(in_path + '\\' + fn, out_path)
 
-# Kaffeezimmer IKG
-x_offset = 548495
-y_offset = 5804458
-r = 25
 
 #####################################################################
 # Split ref ply into cells
+# Support multipy ply file and handle the borders automatically
 #####################################################################
 
-def split_ref_to_tiles(ref_path, ref_out_dir, r, x_offset, y_offset):
 
-    import shutil
+def split_ref_to_tiles(ref_path, ref_out_dir, r, x_offset, y_offset, res_ref):
+
+    check_and_create(ref_out_dir)
     list_ref_ply = os.listdir(ref_path)
-
+    
+    num_point_per_kacheln = int(pow(r/res_ref, 2))
+    imcomplete = []
+    
     for fn_ref in list_ref_ply:
         data = read_bin_double(ref_path + fn_ref, 9)
         data = np.array(data) - [x_offset, y_offset, 0]
@@ -36,13 +37,21 @@ def split_ref_to_tiles(ref_path, ref_out_dir, r, x_offset, y_offset):
         for cell_idx in d.keys():
             x,y = [int(idx) for idx in cell_idx.split('+')]
             ply_name, cell_name = coord_fn_from_cell_index(x,y,'')
+            
             subdata = data[d[cell_idx]] - [x*r, y*r, 0]
-            write_points(subdata, ref_out_dir + fn_ref + '\\'+ cell_name + '.ply')
+
+            output_fn = ref_out_dir + fn_ref + '\\'+ cell_name + '.ply'
+            write_points(subdata, output_fn)
+            
+            if len(d[cell_idx]) < num_point_per_kacheln:
+                imcomplete.append(cell_name + '.ply')
 
             del subdata
         del data, d
     
     list_ref_tiles = os.listdir(ref_out_dir)
+    removed = []
+    
     for i in xrange(len(list_ref_tiles)-1):
 
         list_left = ref_out_dir + list_ref_tiles[i]
@@ -56,18 +65,26 @@ def split_ref_to_tiles(ref_path, ref_out_dir, r, x_offset, y_offset):
             data_left = read_bin(list_left + '\\' + fn, 7)
             data_right = read_bin(list_right + '\\' + fn, 7)
             data_new = mergecloud(data_left,data_right)
-            write_points(data_new, ref_out_dir + fn)
-            print fn
-            os.remove(list_left + '\\' + fn)
-            os.remove(list_right + '\\' + fn)
-            
+
+            if len(data_new) == num_point_per_kacheln:
+                os.remove(list_left + '\\' + fn)
+                os.remove(list_right + '\\' + fn)
+                write_points(data_new, ref_out_dir + fn)
+                removed.append(fn)
+
+    intersection = list(set(imcomplete) - set(removed))
+    check_and_create(ref_out_dir + 'reduced\\')
+    
     for fn_list in list_ref_tiles:
 
         path = ref_out_dir + fn_list + '\\'
         list_path = os.listdir(path)
 
         for fn_file in list_path:
-            shutil.move(path + fn_file, ref_out_dir+fn_file)
+            if fn_file in intersection:
+                shutil.move(path + fn_file, ref_out_dir + 'reduced\\' + fn_file)
+            else:
+                shutil.move(path + fn_file, ref_out_dir+fn_file)
 
     [os.rmdir(ref_out_dir + fn_list) for fn_list in list_ref_tiles]
     print 'Finish spliting'
@@ -79,6 +96,11 @@ def split_ref_to_tiles(ref_path, ref_out_dir, r, x_offset, y_offset):
 
 def split_runid(in_dir_update, out_dir_update, start_index):
 
+##    # Kaffeezimmer IKG
+##    x_offset = 548495
+##    y_offset = 5804458
+##    r = 25
+    
     list_runids = os.listdir(in_dir_update)
 
     for fn_runid in list_runids[start_index:]:

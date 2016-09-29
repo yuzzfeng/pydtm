@@ -1,29 +1,26 @@
 import os 
 import numpy as np
+from itertools import product
+import matplotlib.pyplot as plt
 
 from lib.read import rasterize
-##from lib.ground_filtering import ground_filter
+from lib.cell2world import Hexa2Decimal, int2hex, coord_fn_from_cell_index
 from lib.cell2world import coord, coord_fn_from_cell_index
 from lib.ply import write_points, write_points_double, read_bin, read_bin_double, read_bin_xyz_norm_scale
 from lib.shift import  shiftvalue, reject_outliers
 
+from lib.diff import calc_diff
 from lib.checkRunids import check_and_create
-
 from lib.load import load_aligned_data
-
 from lib.assemble import split_ref_to_tiles
 from lib.produceDTM import local_to_UTM, local_to_UTM_update_ref, local_to_UTM_rest_ref
-
-
-from lib.cell2world import Hexa2Decimal, int2hex, coord_fn_from_cell_index
 from lib.boundaries import apply_gaussian
-from itertools import product
+
 
 def search_index(list_pointcloud, name):
     list_pointcloud = np.array(list_pointcloud)
     return np.where(list_pointcloud==name)
 
-import matplotlib.pyplot as plt
 def plot_img(img):  
     plt.figure()
     plt.imshow(img)
@@ -44,36 +41,6 @@ def get_range_from_fn_list(fn_list, r,x_offset,y_offset):
 
     return minM, minN, M/r, N/r
 
-res_ref = 0.5
-
-geoid = 42.9664
-sigma_geoid = 0.4
-
-x_offset = 548495 + 5
-y_offset = 5804458 + 42
-r = 15
-
-
-ref_out_dir = 'C:\\temp\\aligned_ref\\'
-##ref_path = 'C:\\_EVUS_DGM\\DEM_2009_UTM_Zone_32_Ricklingen\\DEM_ply\\1in4\\'
-##split_ref_to_tiles(ref_path, ref_out_dir, r, x_offset, y_offset)
-list_pointcloud_ref = os.listdir(ref_out_dir)
-
-ref_update_dir = 'C:\\temp\\aligned_ref_update\\'
-ref_cut_dir = 'C:\\temp\\aligned_ref_update_cut\\'
-
-pointcloud_path = 'X:\\Proc\\ricklingen_yu\\map\\'
-
-##ground_filtering_out_dir = 'C:\\temp\\aligned_GF\\'
-ground_filtering_out_dir = 'C:\\temp\\aligned_GF_05082016\\'
-
-
-
-
-list_pointcloud = os.listdir(pointcloud_path)
-list_pointcloud_filtered = os.listdir(ground_filtering_out_dir)
-
-
 def calc_difference_mms_ref(fn, args):
 
     list_pointcloud_ref, ground_filtering_out_dir, ref_out_dir = args
@@ -88,11 +55,36 @@ def calc_difference_mms_ref(fn, args):
             
         return fn, shift_value, shift_img
 
-    
+
+
+res_ref = 0.5
+
+geoid = 42.9664
+sigma_geoid = 0.4
+
+x_offset = 548495 + 5
+y_offset = 5804458 + 42
+r = 15
+
+ref_out_dir = 'C:\\temp\\aligned_ref\\'
+##ref_path = 'C:\\_EVUS_DGM\\DEM_2009_UTM_Zone_32_Ricklingen\\DEM_ply\\1in4\\'
+##split_ref_to_tiles(ref_path, ref_out_dir, r, x_offset, y_offset)
+list_pointcloud_ref = os.listdir(ref_out_dir)
+
+ref_update_dir = 'C:\\temp\\aligned_ref_update\\'
+ref_cut_dir = 'C:\\temp\\aligned_ref_update_cut\\'
+
+pointcloud_path = 'X:\\Proc\\ricklingen_yu\\map\\'
+
+ground_filtering_out_dir = 'C:\\temp\\aligned_GF_05082016\\'
+
+list_pointcloud = os.listdir(pointcloud_path)
+list_pointcloud_filtered = os.listdir(ground_filtering_out_dir)
+
 
 if __name__ == "__main__":
 
-    from lib.diff import calc_diff
+    
     list_shift_value, list_shift_img = calc_diff(list_pointcloud_filtered, ground_filtering_out_dir, ref_out_dir, res_ref, r)
 
     if 1:
