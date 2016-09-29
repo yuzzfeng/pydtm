@@ -3,6 +3,8 @@ import numpy as np
 from itertools import product
 import matplotlib.pyplot as plt
 
+from environmentSetting import *
+
 from lib.read import rasterize
 from lib.cell2world import Hexa2Decimal, int2hex, coord_fn_from_cell_index
 from lib.cell2world import coord, coord_fn_from_cell_index
@@ -12,14 +14,13 @@ from lib.shift import  shiftvalue, reject_outliers
 from lib.diff import calc_diff
 from lib.checkRunids import check_and_create
 from lib.load import load_aligned_data
-from lib.assemble import split_ref_to_tiles
 from lib.produceDTM import local_to_UTM, local_to_UTM_update_ref, local_to_UTM_rest_ref
 from lib.boundaries import apply_gaussian
 
 
-def search_index(list_pointcloud, name):
-    list_pointcloud = np.array(list_pointcloud)
-    return np.where(list_pointcloud==name)
+##def search_index(list_pointcloud, name):
+##    list_pointcloud = np.array(list_pointcloud)
+##    return np.where(list_pointcloud==name)
 
 def plot_img(img):  
     plt.figure()
@@ -57,28 +58,25 @@ def calc_difference_mms_ref(fn, args):
 
 
 
-res_ref = 0.5
+##res_ref = 0.5
+##
+##geoid = 42.9664
+##sigma_geoid = 0.4
+##
+##x_offset = 548495 + 5
+##y_offset = 5804458 + 42
+##r = 15
 
-geoid = 42.9664
-sigma_geoid = 0.4
+##ref_out_dir = 'C:\\temp\\aligned_ref\\'
+##ref_update_dir = 'C:\\temp\\aligned_ref_update\\'
+##ref_cut_dir = 'C:\\temp\\aligned_ref_update_cut\\'
 
-x_offset = 548495 + 5
-y_offset = 5804458 + 42
-r = 15
+##pointcloud_path = 'X:\\Proc\\ricklingen_yu\\map\\'
+##
+##ground_filtering_out_dir = 'C:\\temp\\aligned_GF_05082016\\'
 
-ref_out_dir = 'C:\\temp\\aligned_ref\\'
-##ref_path = 'C:\\_EVUS_DGM\\DEM_2009_UTM_Zone_32_Ricklingen\\DEM_ply\\1in4\\'
-##split_ref_to_tiles(ref_path, ref_out_dir, r, x_offset, y_offset)
+##list_pointcloud = os.listdir(pointcloud_path)
 list_pointcloud_ref = os.listdir(ref_out_dir)
-
-ref_update_dir = 'C:\\temp\\aligned_ref_update\\'
-ref_cut_dir = 'C:\\temp\\aligned_ref_update_cut\\'
-
-pointcloud_path = 'X:\\Proc\\ricklingen_yu\\map\\'
-
-ground_filtering_out_dir = 'C:\\temp\\aligned_GF_05082016\\'
-
-list_pointcloud = os.listdir(pointcloud_path)
 list_pointcloud_filtered = os.listdir(ground_filtering_out_dir)
 
 

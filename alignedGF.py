@@ -6,10 +6,10 @@ from environmentSetting import *
 from lib.checkRunids import check_and_create
 from lib.load import load_aligned_data
 from lib.ground_filtering import ground_filter
-from lib.cell2world import coord, coord_fn_from_cell_index
-from lib.ply import write_points, write_points_double, read_bin, read_bin_double, read_bin_xyz_norm_scale
+from lib.cell2world import coord
+from lib.ply import write_points
 
-##ref_out_dir = 'C:\\temp\\aligned_ref\\'
+
 list_pointcloud_ref = os.listdir(ref_out_dir)
     
 def ground_filter_aligned_data(fn, args):
@@ -56,18 +56,10 @@ def ground_filter_multicore(list_pointcloud, args):
 
 if __name__ == "__main__":
 
-##    geoid = 42.9664
-##    sigma_geoid = 0.6
-##
-##    x_offset = 548495 + 5
-##    y_offset = 5804458 + 42
-##    r = 15
-
-##    pointcloud_path = 'X:\\Proc\\ricklingen_yu\\map\\'
     list_pointcloud = os.listdir(pointcloud_path)
-
     check_and_create(ground_filtering_out_dir)
-##    ground_filtering_out_dir = 'C:\\temp\\aligned_GF_29092016\\'
-    
+
     args = [pointcloud_path, ground_filtering_out_dir, r, x_offset, y_offset, geoid, sigma_geoid]
     result = ground_filter_multicore(list_pointcloud, args)
+
+    print 'process finished', sum(result), '/', len(result)
