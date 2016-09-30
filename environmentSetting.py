@@ -8,14 +8,16 @@
 '''
 Environment Parameters Setting - pydtm
 
-Generally you need to define the input lidar data and input reference data
+Define the path of input lidar data and input reference data
 
 With an given refence data such as a 2D Grid/Image, tranform it firstly to 3D point cloud, e.g. using ArcGIS.
 If it is a large area, please partition to small. Then save under reference path and name them such as:
 
 [xxx_1.ply, xxx_2.ply, xxx_3.ply] 
 
-
+Input of the data should be partitioned into grids based on a global origin and grid size. The id of each
+grid in x and y direction are then calculated in hex number in 8 digit, e.g. ffffffff_00000001. This step make
+the file name contains coordinates in global coordinate system.
 
 '''
 
@@ -28,7 +30,7 @@ ref_path = 'C:\\_EVUS_DGM\\DEM_2009_UTM_Zone_32_Ricklingen\\DEM_ply\\1in4\\'
 # Output Path
 out_path = 'C:\\temp\\DTM_29092016\\'
 
-# Path for intemediat results
+# Path for intermediat results
 ref_out_dir = out_path + 'ref\\'
 ground_filtering_out_dir = out_path + 'aligned_GF\\'
 

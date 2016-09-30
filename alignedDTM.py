@@ -56,7 +56,8 @@ if __name__ == "__main__":
 
     update_dtm(list_shift_img, raster_size, radius, ref_cut_dir, ref_update_dir,
                shift, res_ref, list_pointcloud_ref, ref_out_dir)
-
+    print 'updates generated'
+    
     check_and_create(geo_ground_filtering_out_dir)
     check_and_create(final_dir)
     check_and_create(rest_dir)
