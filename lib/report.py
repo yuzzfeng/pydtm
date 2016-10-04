@@ -27,7 +27,22 @@ def get_range_from_fn_list(fn_list, r,x_offset,y_offset):
 
     return minM, minN, M/r, N/r
 
-def generate_report(list_shift_value, list_shift_img, out_path, r, x_offset,y_offset):
+
+def generate_diff_image(list_shift_img, M, N, minM, minN, scale, nonvalue, report_path, res_ref):
+
+    diff_img = nonvalue * np.ones((M * r / res_ref, N * r / res_ref))
+
+    for fn, data in list_shift_img.iteritems():
+        mm,nn = read_fn(fn[:17],r,x_offset,y_offset)
+        mm,nn = mm-minM, nn-minN
+
+        diff_img[mm*scale:mm*scale+r*scale,nn*scale:nn*scale+r*scale] = data
+
+    write_asc('diff', report_path, minM, minN, np.flipud(diff_img.T), res_ref)
+
+
+
+def generate_report(list_shift_value, list_shift_img, out_path, r, x_offset,y_offset, res_ref):
 
     report_path = out_path + 'report\\'
     check_and_create(report_path)
@@ -48,6 +63,9 @@ def generate_report(list_shift_value, list_shift_img, out_path, r, x_offset,y_of
 
     shift = np.median(list_shift_value[ind])
     minM, minN, lenM, lenN = get_range_from_fn_list(list_shift_img.keys(), r,x_offset,y_offset)
+    nonvalue = -999.0
+    
+    generate_diff_image(list_shift_img, M, N, minM, minN, 1/res_ref, nonvalue, report_path, res_ref)
 
     img = np.zeros((lenN, lenM))
     i = 0

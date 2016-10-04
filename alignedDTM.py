@@ -48,7 +48,7 @@ if __name__ == "__main__":
     list_shift_value, list_shift_img = calc_diff(list_pointcloud_filtered, ground_filtering_out_dir, ref_out_dir, res_ref, r)
     print 'difference calculated'
     
-    shift = generate_report(list_shift_value, list_shift_img, out_path, r, x_offset,y_offset)
+    shift = generate_report(list_shift_value, list_shift_img, out_path, r, x_offset,y_offset, res_ref)
     print 'report generated'
     
     raster_size = 30

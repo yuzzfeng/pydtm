@@ -31,7 +31,7 @@ def read_cellname(fn,r,x_offset,y_offset):
     return mm, nn
 
 def read_fn(fn,r,x_offset,y_offset):
-    m,n,runid = fn.split('.')[0].split('_')
+    m,n = fn.split('.')[0].split('_')[:2]
     [mm,nn] = coord(m, n, r, x_offset, y_offset)
     return mm, nn
 

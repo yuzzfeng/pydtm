@@ -22,7 +22,10 @@ the file name contains coordinates in global coordinate system.
 '''
 
 # Lidar Points Path
-pointcloud_path = 'X:\\Proc\\ricklingen_yu\\map\\'
+##pointcloud_path = 'X:\\Proc\\ricklingen_yu\\map\\'
+pointcloud_path = 'X:\\Proc\\ricklingen_yu\\map_bauarbeit\\'
+
+
 
 # Reference Points path
 ref_path = 'C:\\_EVUS_DGM\\DEM_2009_UTM_Zone_32_Ricklingen\\DEM_ply\\1in4\\'

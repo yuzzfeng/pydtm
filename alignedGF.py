@@ -56,6 +56,7 @@ def ground_filter_multicore(list_pointcloud, args):
 
 if __name__ == "__main__":
 
+##    list_pointcloud = ['00000017_fffffebc.ply', '00000018_fffffeac.ply']
     list_pointcloud = os.listdir(pointcloud_path)
     check_and_create(ground_filtering_out_dir)
 
