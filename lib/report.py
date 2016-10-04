@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from cell2world import coord
 from shift import  shiftvalue, reject_outliers
 from checkRunids import check_and_create
+from asc import write_asc
 
 def plot_img(img):  
     plt.figure()
@@ -28,7 +29,9 @@ def get_range_from_fn_list(fn_list, r,x_offset,y_offset):
     return minM, minN, M/r, N/r
 
 
-def generate_diff_image(list_shift_img, M, N, minM, minN, scale, nonvalue, report_path, res_ref):
+def generate_diff_image(list_shift_img, M, N, minM, minN,
+                        scale, nonvalue, report_path,
+                        r, x_offset,y_offset, res_ref):
 
     diff_img = nonvalue * np.ones((M * r / res_ref, N * r / res_ref))
 
@@ -65,7 +68,9 @@ def generate_report(list_shift_value, list_shift_img, out_path, r, x_offset,y_of
     minM, minN, lenM, lenN = get_range_from_fn_list(list_shift_img.keys(), r,x_offset,y_offset)
     nonvalue = -999.0
     
-    generate_diff_image(list_shift_img, M, N, minM, minN, 1/res_ref, nonvalue, report_path, res_ref)
+    generate_diff_image(list_shift_img, lenM, lenN, minM, minN,
+                        1/res_ref, nonvalue, report_path,
+                        r, x_offset,y_offset, res_ref)
 
     img = np.zeros((lenN, lenM))
     i = 0
