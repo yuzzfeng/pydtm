@@ -1,3 +1,6 @@
+# Copyright (C) 2016 Yu Feng <yuzz.feng@gmail.com>
+# Licensed under the GNU LGPL v2.1 - http://www.gnu.org/licenses/lgpl.html
+
 ###################################################
 ## Split the given ply files in tiles
 ###################################################

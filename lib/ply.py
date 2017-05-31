@@ -1,4 +1,7 @@
+import numpy as np
 import struct
+
+from tool import gen_str
 
 #####################################################################
 # Write binary pointcloud
@@ -111,3 +114,4 @@ def read_bin_xyz_norm_scale(path, skiprows):
             xyz.append(point)
 
     return xyz
+    

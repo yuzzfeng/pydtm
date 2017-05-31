@@ -1,7 +1,7 @@
 import numpy as np
 import math
 import struct
-
+import random
 from scipy import spatial
 
 
@@ -305,7 +305,12 @@ def read_ascii_xyz(filename, delimiter, skiprows, dtype, e, dim):
             for line in infile:
                 line = line.rstrip().split(delimiter)
                 v = line[0:3]
-                gen_str_2d(v,i)
+                
+                if dim==3:
+                    gen_str(v,i)
+                if dim==2:
+                    gen_str_2d(v,i)
+                    
                 i = i + 1
                 for item in v:
                     yield dtype(item)
@@ -314,6 +319,162 @@ def read_ascii_xyz(filename, delimiter, skiprows, dtype, e, dim):
     data = np.fromiter(iter_func(), dtype=dtype)
     data = data.reshape((-1, 3))
     return data,d
+
+
+
+
+#########################################################################################################
+# Auto binary reader
+######################################################################################################### 
+
+# Update auto read header for reading binary data
+def read_bin_ascii_header(fn):
+    
+    dataDict = {'double': 'd', 'float': 'f', 'int': 'i'}
+    digitDict = {'double': 8, 'float': 4, 'int': 4}
+    
+    lines = []
+    with open(fn, 'rb') as f:
+        
+        for line in f:
+            if '\0' not in line:
+                lines.append(line)
+                if 'end_header' in line:
+                    break
+            else:
+                break
+    types=''
+    digits = 0
+    for line in lines:
+        if 'property' in line:
+            t = dataDict[line.split()[1]]
+            digit = digitDict[line.split()[1]]
+            types += t
+            digits += digit
+            
+    return len(lines), types, digits
+    
+# Read binary point cloud
+def read_bin_auto(fn):
+    
+    skiprows, types, digits = read_bin_ascii_header(fn)
+
+    xyz = []
+    with open(fn, "rb") as file_:
+        skip = 0
+        for _ in xrange(skiprows):  
+            skip = skip + len(next(file_))
+            
+        file_.seek(0, 2)
+        size = file_.tell()
+        file_.seek(skip, 0)
+            
+        while file_.tell() < size:
+            binary = file_.read(digits)
+            point = struct.unpack(types, binary)
+            xyz.append(point)
+
+    return xyz  
+    
+def read_bin_args(fn, args):
+    
+    skiprows, types, digits = read_bin_ascii_header(fn)
+    
+    global d,eps
+    d = dict()
+    height_min,height_max,eps = args
+    
+    xyz = []
+    i = 0
+
+    with open(fn, "rb") as file_:
+
+        skip = 0
+        for _ in xrange(skiprows):  
+            skip = skip + len(next(file_))
+            
+        file_.seek(0, 2)
+        size = file_.tell()
+        file_.seek(skip, 0)
+            
+        while file_.tell() < size:
+            binary = file_.read(digits)
+            point = struct.unpack(types, binary)
+
+            z_tol = point[2]
+            if z_tol<height_max and z_tol>height_min:
+                xyz.append(point)
+                gen_str(point,i)
+                i = i + 1
+    xyz = np.array(xyz)
+    return xyz, d
+
+
+def read_bin_resmapling(fn, args, r, X0):
+
+    skiprows, types, digits = read_bin_ascii_header(fn)
+    
+    r = float(r)
+    
+    x0,y0,z0 = X0[0],X0[1],X0[2]
+    
+    global d,eps
+    d = dict()
+    height_min,height_max,eps = args
+
+    xyz = []
+#    runids = []
+    i = 0
+
+    with open(fn, "rb") as file_:
+        skip = 0
+        for _ in xrange(skiprows):  
+            skip = skip + len(next(file_))
+            
+        file_.seek(0, 2)
+        size = file_.tell()
+        file_.seek(skip, 0)
+            
+        while file_.tell() < size:
+            binary = file_.read(digits)
+            point = struct.unpack(types, binary)
+            
+#            runid = point[3]
+            point = (point[0]-x0, point[1]-y0, point[2]-z0)
+            
+            z_tol = point[2]
+            if z_tol < height_max and z_tol > height_min and point[0]<r and point[1]<r:
+#                runids.append(runid)
+                xyz.append(point)
+                gen_str(point, i)
+                i = i + 1
+
+    return np.array(xyz), d #, np.array(runids)
+    
+#    resampled = []
+#    for key, value in d.iteritems():
+#        resampled.append(random.choice(value))
+#                
+#    return xyz[resampled]
+
+
+#########################################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #########################################################################################################
