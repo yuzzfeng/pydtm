@@ -13,16 +13,17 @@ Input of the data should be partitioned into grids based on a global origin and 
 ### Comparisions
 
 <div align = 'center'>
-<a href = 'img/bridge_after.PNG'><img src = 'img/bridge_after.PNG' height = '200px'></a>
-<img src = 'img/bridge_after.PNG' height = '200px'>
-<img src = 'img/bridge_after.PNG' height = '200px'>
+<a href = 'img/Curb_before.PNG'><img src = 'img/bridge_after.PNG' height = '200px'></a>
+<img src = 'img/Circle_before' height = '200px'>
+<img src = 'img/Correction_before' height = '200px'>
 <a href = 'img/bridge_after.PNG'><img src = 'img/bridge_after.PNG' height = '200px'></a>
 <br>
 <a href = 'img/bridge_after.PNG'><img src = 'img/bridge_after.PNG' height = '200px'></a>
 <img src = 'img/bridge_after.PNG' height = '200px'>
 <img src = 'img/bridge_after.PNG' height = '200px'>
 <a href = 'img/bridge_after.PNG'><img src = 'img/bridge_after.PNG' height = '200px'></a>
-
+</div>
+    
 ### Commands
 
     python rejectOutliers.py
