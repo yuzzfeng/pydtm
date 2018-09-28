@@ -1,18 +1,23 @@
 # ENHANCING THE RESOLUTION OF URBAN DIGITAL TERRAIN MODELS USING MOBILE MAPPING SYSTEMS
 
-A library which aims to convert the Mobile Mapping LiDAR Point Cloud to Digital Terrain Model(DTM)
-
 ![](https://github.com/fy19891009/pydtm/blob/master/img/DTM.PNG)
 
-The whole process can be understood as ground filtering on mobile LiDAR data. The library offers also the possibility to use an given DTM (e.g. ALS) with low resolusion as a prior to generate a mix of low and high resolusion DTM.
+A library which aims to convert the Mobile Mapping LiDAR Point Cloud to Digital Terrain Model(DTM). The whole process can be understood as ground filtering on mobile LiDAR data. The library offers also the possibility to use an given DTM (e.g. ALS) with low resolusion as a prior to generate a mix of low and high resolusion DTM.
 
-The processing support distributed computing using python multiprocessing units.
+## Key features
 
-### Input structures
+- Ground filtering with grid based approach (Wack and Wimmer, 2002)
+- Merge method for DTMs in different resolution
+- Height adaption based on one of the DTMs
+- The processing support distributed computing using python multiprocessing units.
+
+## Input structures
 
 Input of the data should be partitioned into grids based on a global origin and grid size. The number of each grid in x and y direction are then calculated in hex number in 8 digit, e.g. ffffffff_00000001. This step make the file name contains coordinates in global coordinate system.
 
-### Comparisions 
+**The point cloud from differen epochs should be first aligned, the registration is not included in this repository.**
+
+## Comparisions 
 
 Following are the comparision between the DTM with different resolution.
 
@@ -28,13 +33,13 @@ Following are the comparision between the DTM with different resolution.
 <img src = 'img/Correction_after.PNG' height = '200px'>
 </div>
     
-### Commands
+## Commands
 
     python rejectOutliers.py
     python alignedDTM.py
     python collectDTM.py
 
-### Citation:
+## Citation:
 
 Please cite this paper in your publications if it helps your research:
 
