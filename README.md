@@ -15,7 +15,7 @@ A library which aims to convert the Mobile Mapping LiDAR Point Cloud to Digital 
 
 Input of the data should be partitioned into grids based on a global origin and grid size. The number of each grid in x and y direction are then calculated in hex number in 8 digit, e.g. ffffffff_00000001. This step make the file name contains coordinates in global coordinate system.
 
-**The point cloud from differen epochs should be first aligned, the registration is not included in this repository.**
+**The point clouds from different epochs should be first aligned, the registration step is not included in this repository.**
 
 ## Comparisions 
 
