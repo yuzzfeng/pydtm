@@ -8,9 +8,13 @@ The whole process can be understood as ground filtering on mobile LiDAR data. Th
 
 The processing support distributed computing using python multiprocessing units.
 
+### Input structures
+
 Input of the data should be partitioned into grids based on a global origin and grid size. The number of each grid in x and y direction are then calculated in hex number in 8 digit, e.g. ffffffff_00000001. This step make the file name contains coordinates in global coordinate system.
 
-### Comparisions between reference DTM and Mobile Mapping DTM
+### Comparisions 
+
+Following are the comparision between the DTM with different resolution.
 
 <div align = 'center'>
 <img src = 'img/Curb_before.PNG' height = '200px'>
