@@ -10,5 +10,35 @@ The processing support distributed computing using python multiprocessing units.
 
 Input of the data should be partitioned into grids based on a global origin and grid size. The number of each grid in x and y direction are then calculated in hex number in 8 digit, e.g. ffffffff_00000001. This step make the file name contains coordinates in global coordinate system.
 
+### Comparisions
 
+<div align = 'center'>
+<a href = 'img/bridge_after.PNG'><img src = 'img/bridge_after.PNG' height = '200px'></a>
+<img src = 'img/bridge_after.PNG' height = '200px'>
+<img src = 'img/bridge_after.PNG' height = '200px'>
+<a href = 'img/bridge_after.PNG'><img src = 'img/bridge_after.PNG' height = '200px'></a>
+<br>
+<a href = 'img/bridge_after.PNG'><img src = 'img/bridge_after.PNG' height = '200px'></a>
+<img src = 'img/bridge_after.PNG' height = '200px'>
+<img src = 'img/bridge_after.PNG' height = '200px'>
+<a href = 'img/bridge_after.PNG'><img src = 'img/bridge_after.PNG' height = '200px'></a>
 
+### Commands
+
+    python rejectOutliers.py
+    python alignedDTM.py
+    python collectDTM.py
+
+### Citation:
+Please cite this paper in your publications if it helps your research:
+
+    @Article{isprs-annals-IV-4-W6-11-2018,
+      AUTHOR = {Feng, Y. and Brenner, C. and Sester, M.},
+      TITLE = {ENHANCING THE RESOLUTION OF URBAN DIGITAL TERRAIN MODELS USING MOBILE MAPPING SYSTEMS},
+      JOURNAL = {ISPRS Annals of Photogrammetry, Remote Sensing and Spatial Information Sciences},
+      VOLUME = {IV-4/W6},
+      YEAR = {2018},
+      PAGES = {11--18},
+      URL = {https://www.isprs-ann-photogramm-remote-sens-spatial-inf-sci.net/IV-4-W6/11/2018/},
+      DOI = {10.5194/isprs-annals-IV-4-W6-11-2018}
+    }
