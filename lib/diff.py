@@ -41,15 +41,17 @@ def calc_diff(list_pointcloud_filtered, mms_dir, ref_dir, res_ref, r):
     p.join()
 
     list_shift_value = []
+    dict_shift_value = dict()
     list_shift_img = dict()
 
     for fn, shift_value, shift_img in result:
         list_shift_value.append(shift_value)
         list_shift_img[fn] = shift_img
+        dict_shift_value[fn] = shift_value
 
     del result 
 
-    return list_shift_value, list_shift_img
+    return list_shift_value, list_shift_img, dict_shift_value
 
 
 

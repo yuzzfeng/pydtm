@@ -31,11 +31,16 @@ pointcloud_path = 'X:\\Proc\\ricklingen_yu\\map_bauarbeit\\'
 ref_path = 'C:\\_EVUS_DGM\\DEM_2009_UTM_Zone_32_Ricklingen\\DEM_ply\\1in4\\'
 
 # Output Path
-out_path = 'C:\\temp\\DTM_29092016\\'
+out_path_old = 'C:\\temp\\DTM_29092016\\'
+#out_path_before = 'C:\\temp\\DTM_21032018\\'
+#out_path = 'C:\\temp\\DTM_04042018\\'
+out_path = 'C:\\temp\\DTM_20180416\\'
 
 # Path for intermediat results
-ref_out_dir = out_path + 'ref\\'
-ground_filtering_out_dir = out_path + 'aligned_GF\\'
+ref_out_dir = out_path_old + 'ref\\'
+#ground_filtering_out_dir = out_path_old + 'aligned_GF\\'
+#ground_filtering_out_dir = out_path_before + 'aligned_GR\\'
+ground_filtering_out_dir = out_path + 'aligned_GR\\'
 
 ref_update_dir = out_path + 'aligned_ref_update\\'
 ref_cut_dir = out_path + 'aligned_ref_update_cut\\'
@@ -51,6 +56,9 @@ r = 15
 
 # Resolusion of the reference DTM grids
 res_ref = 0.5
+
+tolerance_up = 3
+tolerance_down = 0.5
 
 # General geoid height in that area as a prior, http://geographiclib.sourceforge.net/cgi-bin/GeoidEval
 geoid = 42.9664

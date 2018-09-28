@@ -48,10 +48,10 @@ if __name__ == "__main__":
     list_pointcloud_ref = os.listdir(ref_out_dir)
     list_pointcloud_filtered = os.listdir(ground_filtering_out_dir)
     
-    list_shift_value, list_shift_img = calc_diff(list_pointcloud_filtered, ground_filtering_out_dir, ref_out_dir, res_ref, r)
+    list_shift_value, list_shift_img, dict_shift_value = calc_diff(list_pointcloud_filtered, ground_filtering_out_dir, ref_out_dir, res_ref, r)
     print 'difference calculated'
     
-    shift = generate_report(list_shift_value, list_shift_img, out_path, r, x_offset,y_offset, res_ref)
+    shift = generate_report(list_shift_value, list_shift_img, dict_shift_value, out_path, r, x_offset,y_offset, res_ref)
     print 'report generated'
     
     raster_size = 30

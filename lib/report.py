@@ -1,11 +1,12 @@
-import os 
-import numpy as np
-import matplotlib.pyplot as plt
-
-from cell2world import coord
-from shift import  shiftvalue, reject_outliers
-from checkRunids import check_and_create
-from asc import write_asc
+if 1:
+    import os 
+    import numpy as np
+    import matplotlib.pyplot as plt
+    
+    from cell2world import coord
+    from shift import  shiftvalue, reject_outliers
+    from checkRunids import check_and_create
+    from asc import write_asc
 
 def plot_img(img):  
     plt.figure()
@@ -45,14 +46,27 @@ def generate_diff_image(list_shift_img, M, N, minM, minN,
 
 
 
-def generate_report(list_shift_value, list_shift_img, out_path, r, x_offset,y_offset, res_ref):
+def generate_report(list_shift_value, list_shift_img, dict_shift_value, out_path, r, x_offset,y_offset, res_ref):
 
     report_path = out_path + 'report\\'
     check_and_create(report_path)
 
-    ind = reject_outliers(list_shift_value, 5)
-
+    ind = reject_outliers(list_shift_value, 20)
     list_shift_value = np.array(list_shift_value)
+    values = np.array(list_shift_value)[ind]
+    max_value = max(values)
+    min_value = min(values)
+    
+    dict_shift_value_cp = dict_shift_value.copy()
+    
+    tobedeleted = []
+    for key, value in dict_shift_value_cp.iteritems():       
+        if value < min_value or value > max_value:
+            tobedeleted.append(key)
+            
+            
+    [dict_shift_value_cp.pop(key, None) for key in tobedeleted]
+    
 
     plt.figure()
     hist, bins = np.histogram(list_shift_value, bins=1000)
@@ -68,27 +82,25 @@ def generate_report(list_shift_value, list_shift_img, out_path, r, x_offset,y_of
     minM, minN, lenM, lenN = get_range_from_fn_list(list_shift_img.keys(), r,x_offset,y_offset)
     nonvalue = -999.0
     
-    generate_diff_image(list_shift_img, lenM, lenN, minM, minN,
-                        1/res_ref, nonvalue, report_path,
-                        r, x_offset,y_offset, res_ref)
+#    generate_diff_image(list_shift_img, lenM, lenN, minM, minN,
+#                        1/res_ref, nonvalue, report_path,
+#                        r, x_offset,y_offset, res_ref)
 
     img = np.zeros((lenN, lenM))
-    i = 0
     for fn in list_shift_img.keys():
         x,y = read_fn(fn[:17], r, x_offset, y_offset)
-        img[lenN -1  - (y-minN)/r, (x-minM)/r] = list_shift_value[i] - shift
-        i = i + 1
+        img[lenN -1  - (y-minN)/r, (x-minM)/r] = dict_shift_value[fn] - shift
 
     plot_img(img)
     plt.savefig(report_path + 'without_rejection_distribution.png')
 
     img = np.zeros((lenN, lenM))
-    i = 0
+
     for fn in list_shift_img.keys():
-        if ind[i]: 
+        if fn in dict_shift_value_cp:
             x,y = read_fn(fn[:17], r, x_offset, y_offset)
-            img[lenN -1  - (y-minN)/r, (x-minM)/r] = list_shift_value[i] - shift
-        i = i + 1
+            img[lenN -1  - (y-minN)/r, (x-minM)/r] = dict_shift_value_cp[fn] - shift
+
 
     plot_img(img)
     plt.savefig(report_path + 'after_rejection_distribution.png')
