@@ -16,3 +16,16 @@ python alignedDTM.py
 python collectDTM.py
 ```
 
+
+```console
+@Article{isprs-annals-IV-4-W6-11-2018,
+AUTHOR = {Feng, Y. and Brenner, C. and Sester, M.},
+TITLE = {ENHANCING THE RESOLUTION OF URBAN DIGITAL TERRAIN MODELS USING MOBILE MAPPING SYSTEMS},
+JOURNAL = {ISPRS Annals of Photogrammetry, Remote Sensing and Spatial Information Sciences},
+VOLUME = {IV-4/W6},
+YEAR = {2018},
+PAGES = {11--18},
+URL = {https://www.isprs-ann-photogramm-remote-sens-spatial-inf-sci.net/IV-4-W6/11/2018/},
+DOI = {10.5194/isprs-annals-IV-4-W6-11-2018}
+}
+```
