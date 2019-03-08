@@ -34,7 +34,8 @@ Following are the comparision between the DTM with different resolution.
 </div>
     
 ## Commands
-
+    
+    python alignedREF.py
     python rejectOutliers.py
     python alignedDTM.py
     python collectDTM.py
