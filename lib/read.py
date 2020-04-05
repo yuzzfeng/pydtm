@@ -25,7 +25,13 @@ def gen_str(coords, i):
 
 # iterate each line in txt or ply data
 def rasterize(data, e, dim = 3):
-
+    
+    if len(data)==0:
+        return dict()
+    
+    # only use first three colomns
+    data = data[:,:3]
+    
     global eps, d
     eps = e
     d = dict()

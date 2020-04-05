@@ -1,5 +1,6 @@
-import numpy as np
 import struct
+import numpy as np
+from itertools import product
 
 from asc import read_asc
 
@@ -12,7 +13,6 @@ from asc import read_asc
 ##x_offset = 548495
 ##y_offset = 5804458
 ##r = 25
-
 
 #######################################################################
 # get the coordinates of the left down corder from file name
@@ -40,6 +40,16 @@ def read_fn_runid(fn,r,x_offset,y_offset):
     [mm,nn] = coord(m, n, r, x_offset, y_offset)
     return mm, nn, runid
 
+def search_neigh_tiles(fn, radius = 1):
+    # Search the nearest tiles based on grid and radius
+    m,n = fn[:17].split('_')
+    int_m = Hexa2Decimal(m)
+    int_n = Hexa2Decimal(n)
+    combi = np.array(list((product(range(-radius,radius+1), range(-radius,radius+1)))))
+    combi_global = combi + [int_m, int_n]
+    neigh_list = [coord_fn_from_cell_index(mx,nx,'')[1]+'.ply' for mx,nx in combi_global]
+    return neigh_list
+
 #######################################################################
 # From the coordinates to the cell name
 #######################################################################
@@ -49,30 +59,30 @@ def int2hex(num):
         return '{:08x}'.format(num)
     else:
         return '{:08x}'.format(4294967296 + num)
+
     
-def coord_fn(x,y,runid):
-
-    hexx = int2hex((x - x_offset)/r)
-    hexy = int2hex((y - y_offset)/r)
-
-    return '_'.join([hexx,hexy,runid])
-    
-
 def coord_fn_from_cell_index(x,y,runid):
 
     hexx = int2hex(x)
     hexy = int2hex(y)
     return '_'.join([hexx,hexy,runid]), '_'.join([hexx,hexy])
 
-   
-def max_runid_range(M, N, minM, minN, runid, r):
-
-    new_fn = []
-    for i in xrange(M/r):
-        for j in xrange(N/r):
-            new_fn.append( coord_fn(minM + i * r, minN + j * r, runid) + '.ply' )
-
-    return new_fn
+      
+#def coord_fn(x,y,runid):
+#
+#    hexx = int2hex((x - x_offset)/r)
+#    hexy = int2hex((y - y_offset)/r)
+#
+#    return '_'.join([hexx,hexy,runid])
+#      
+#def max_runid_range(M, N, minM, minN, runid, r):
+#
+#    new_fn = []
+#    for i in xrange(M/r):
+#        for j in xrange(N/r):
+#            new_fn.append( coord_fn(minM + i * r, minN + j * r, runid) + '.ply' )
+#
+#    return new_fn
 
 
 # First check of the size of the current runid

@@ -1,12 +1,12 @@
 if 1:
-    import os 
+    from tqdm import tqdm
     import numpy as np
     from itertools import product
     import matplotlib.pyplot as plt
 
     from ply import write_points, write_points_double, read_bin, read_bin_double, read_bin_xyz_norm_scale
     from cell2world import Hexa2Decimal, int2hex, coord_fn_from_cell_index
-    from checkRunids import check_and_create
+    from util import check_and_create
     from boundaries import apply_gaussian
     from read import rasterize
 
@@ -22,7 +22,7 @@ def update_dtm(list_shift_img, raster_size, radius, ref_cut_dir, ref_update_dir,
     check_and_create(ref_cut_dir)
     check_and_create(ref_update_dir)
     
-    for fn in list_shift_img.keys():
+    for fn in tqdm(list_shift_img.keys()):
 
         img = list_shift_img[fn] - shift
         single_len = img.shape[0]
@@ -96,7 +96,7 @@ def update_dtm(list_shift_img, raster_size, radius, ref_cut_dir, ref_update_dir,
                 check_and_create(ref_update_dir + fn_not)
                 write_points(data_output, ref_update_dir + fn_not +'//' +fn_not + '_from_' + fn)
 
-##                plot_img(update)
+##        plot_img(update)
 ##        plot_img(boundbuffer)
 ##        plot_img(filtered)
 ##        plot_img(img)

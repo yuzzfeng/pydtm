@@ -21,38 +21,59 @@ the file name contains coordinates in global coordinate system.
 
 '''
 
-# Lidar Points Path
-##pointcloud_path = 'X:\\Proc\\ricklingen_yu\\map\\'
-pointcloud_path = 'X:\\Proc\\ricklingen_yu\\map_bauarbeit\\'
+project_name = 'Hannover'
+project_name = '20190924_Hildesheim'
 
-
-
-# Reference Points path
-ref_path = 'C:\\_EVUS_DGM\\DEM_2009_UTM_Zone_32_Ricklingen\\DEM_ply\\1in4\\'
+# Temp file for saving height changes
+tmp_dir = "tmp/" + project_name + '/'
 
 # Output Path
-out_path_old = 'C:\\temp\\DTM_29092016\\'
-#out_path_before = 'C:\\temp\\DTM_21032018\\'
 #out_path = 'C:\\temp\\DTM_04042018\\'
-out_path = 'C:\\temp\\DTM_20180416\\'
+#out_path = 'C:\\temp\\DTM_20180416\\'
+#out_path = 'C:\\temp\\DTM_20190711\\'
+#out_path = 'C:\\temp\\DTM_Hildesheim_20190923\\'
+out_path = 'D:\\_data\\_mms\\20200325Hildesheim\\'
 
+### Lidar Points Path
+##pointcloud_path = 'X:\\Proc\\ricklingen_yu\\map\\'
+##pointcloud_path = 'X:\\Proc\\ricklingen_yu\\map_bauarbeit\\'
+##pointcloud_path = 'X:\\Products\\ricklingen_adjusted_cloud_40m_ply\\'
+##pointcloud_path = 'X:\\Products\\20190919_hildesheim_adjustment\\adjusted_cloud_ply\\'
+pts_dir = "D:/_data/_mms/adjusted_cloud_ply/" # Feng-PC
+
+## Reference Points path
+##ref_path = 'C:\\_EVUS_DGM\\DEM_2009_UTM_Zone_32_Ricklingen\\DEM_ply\\1in4\\'
+ref_path = 'D:\\_data\\_airborne_laser_scanning\\20190924_DTM_Hildesheim\\ply\\'
 # Path for intermediat results
-ref_out_dir = out_path_old + 'ref\\'
-#ground_filtering_out_dir = out_path_old + 'aligned_GF\\'
-#ground_filtering_out_dir = out_path_before + 'aligned_GR\\'
-ground_filtering_out_dir = out_path + 'aligned_GR\\'
+ref_dir = out_path + 'ref\\'
+
+ref_dir = "D:/_data/_dgm/reference/" # Feng-PC
+
+
+# tmp foldersfor intermediat result
+gfilter_out_dir = out_path + 'aligned_GF\\'
+correct_out_dir = out_path + 'aligned_Corr\\'
+gupdate_out_dir = out_path + 'aligned_GR\\'
 
 ref_update_dir = out_path + 'aligned_ref_update\\'
 ref_cut_dir = out_path + 'aligned_ref_update_cut\\'
 
+merged_dir = out_path + 'aligned_a\\'
 geo_ground_filtering_out_dir = out_path + 'aligned_a\\'
 final_dir = out_path + 'aligned_b\\'
 rest_dir = out_path + 'aligned_c\\'
 
 # Glabal original in the meter coordinate system, e.g. UTM 32 Zone, as well as grid size
-x_offset = 548495 + 5
-y_offset = 5804458 + 42
-r = 15
+
+## Hannover Ricklingen
+#x_offset = 548495 + 5
+#y_offset = 5804458 + 42
+#r = 15
+
+## Hildesheim
+x_offset = 564546
+y_offset = 5778458
+r = 25
 
 # Resolusion of the reference DTM grids
 res_ref = 0.5
@@ -61,5 +82,23 @@ tolerance_up = 3
 tolerance_down = 0.5
 
 # General geoid height in that area as a prior, http://geographiclib.sourceforge.net/cgi-bin/GeoidEval
-geoid = 42.9664
+
+## Hannover 52.348816 9.725389
+#geoid = 42.9664
+#sigma_geoid = 0.4
+
+# Hildesheim  52.144409 9.95422
+geoid = 43.7786
 sigma_geoid = 0.4
+
+# Ground filtering parameters
+radius = 3
+res_list = [1.0, 0.5, 0.25, 0.1, 0.05]
+
+# Update parameter
+#shift = 42.9317864988 # Hanvnoer
+#shift = 43.5346042674 # hildesheim
+
+res_update = 0.1
+
+nonvalue = -999.0

@@ -5,9 +5,11 @@ from ply import write_points, write_points_double, read_bin, read_bin_double
 from read import rasterize, read_ascii_xyz
 from tool import mergecloud, read_ply
 
-from cell2world import read_cellname, coord_fn_from_cell_index, read_fn, runid_size, max_runid_range
-from checkRunids import check_and_create, list_runid_read_both_scanner
+from cell2world import read_cellname, coord_fn_from_cell_index
+from checkRunids import check_and_create
 
+#from cell2world import read_fn, runid_size, max_runid_range
+#from checkRunids import list_runid_read_both_scanner
 
 import shutil
 def copytoDst(in_path, fn, out_path):

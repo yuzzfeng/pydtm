@@ -5,6 +5,70 @@ import tool
 
 from read import rasterize
 
+#####################################################################
+# Calculate difference of two ground datasets
+#####################################################################
+
+def calculate_heigh_difference(data_mms, data_ref, res_ref, r):
+    
+    # Spatial indexing
+    d_ref = rasterize(data_ref, res_ref, dim = 2)
+    d_mms = rasterize(data_mms, res_ref, dim = 2)
+    
+    # Calculate difference image
+    delta = []
+    img = np.zeros((int(r/res_ref),int(r/res_ref)))
+    for key, value in d_mms.iteritems():
+        
+        # Get image coordinates
+        x, y = [int(k) for k in key.split('+')]
+        
+        z_mms = data_mms[value,2]
+        mean_mms = np.mean(z_mms)
+        
+        if key in d_ref:
+            mean_ref = np.mean(data_ref[d_ref[key],2])
+            delta.append(mean_mms - mean_ref)
+            img[x, y] = mean_mms - mean_ref
+            
+    return delta, img
+
+
+def calculate_tile_runid_shift(data_mms, data_ref, res_ref, reject_threshold, r,
+                               is_plot = False):
+    
+    delta, img = calculate_heigh_difference(data_mms, data_ref, res_ref, r)
+
+    if len(delta)>1:
+        np.place(img, img==0, None)
+        delta = np.array(delta)
+        alldelta = np.copy(delta)
+
+        ind = reject_outliers(delta, reject_threshold)
+        
+        if is_plot:
+            np.place(delta, ind==False, None)
+            import matplotlib.pyplot as plt
+            plt.figure()
+            plt.plot(range(len(alldelta)),alldelta,'bo')
+            plt.plot(range(len(delta)),delta,'r+')
+            plt.figure();plt.imshow(img)
+            plt.show()
+        return np.mean(delta[ind]), img
+    else:
+        print("Too sparse points")
+        return None,None
+
+
+
+
+
+
+
+#####################################################################
+# Not yet proved
+#####################################################################
+
 # return the index for true or false
 def reject_outliers(data, m):
     data = np.array(data)
@@ -56,14 +120,14 @@ def shiftvalue(data_mms, res_ref, data_ref, d_ref, reject_threshold, r):
         l = len(z_mms)
 
         if l >5:
-            mean_ref = data_ref[d_ref[key],2]
+            mean_ref = np.mean(data_ref[d_ref[key],2])
             delta.append(mean_mms - mean_ref)
             img[x, y] = mean_mms - mean_ref
 
     if len(delta)>1:
         np.place(img, img==0, None)
         delta = np.array(delta)
-        alldelta = np.copy(delta)
+        #alldelta = np.copy(delta)
 
         ind = reject_outliers(delta, reject_threshold)
         
@@ -76,6 +140,7 @@ def shiftvalue(data_mms, res_ref, data_ref, d_ref, reject_threshold, r):
 
         return np.mean(delta[ind]), img
     else:
+        print("Too sparse points")
         return None,None
     
 def calcMeanVoxelHeight(data_mms, d_mms):

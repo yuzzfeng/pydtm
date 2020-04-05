@@ -1,23 +1,24 @@
 import numpy as np
-from tool import read_ascii_xyz
-from read import rasterize
-
-from ply import read_bin
-from shift import  shiftvalue
 
 # Multiprocessing
 from multiprocessing import Pool
-from itertools import izip
+#from itertools import izip
 from itertools import repeat
 
+from lib.ply import read_bin
+from lib.read import rasterize
+from lib.shift import shiftvalue
+from lib.load import load_mms
 
 ############################################################################
 
+
 def calc_diff_core(fn, args):
-
-    mms_dir, ref_dir, res_ref, r = args
-
-    data_mms = read_bin(mms_dir + fn, 7)
+    
+    mms_dir, ref_dir, res_ref, r, x_offset, y_offset, geoid, sigma_geoid  = args
+    
+    data_mms = load_mms(fn, args)
+    #data_mms = read_bin(mms_dir + fn, 7)
     data_ref = read_bin(ref_dir + fn, 7)
 
     d_ref = rasterize(data_ref, res_ref, dim = 2)
@@ -30,39 +31,58 @@ def calc_diff_core(fn, args):
 def calc_diff_star(a_b):
     return calc_diff_core(*a_b)
 
-def calc_diff(list_pointcloud_filtered, mms_dir, ref_dir, res_ref, r):       
+def calc_diff(list_pointcloud_filtered, args):       
 
-    args = mms_dir, ref_dir, res_ref, r
+    #args = mms_dir, ref_dir, res_ref, r
     
     ## 6 Cores
     p = Pool(6)
-    result = p.map(calc_diff_star, zip(list_pointcloud_filtered, repeat(args)))
+    results = p.map(calc_diff_star, zip(list_pointcloud_filtered, repeat(args)))
     p.close()
     p.join()
+    
+#    results = []
+#    for i in range(len(list_pointcloud_filtered)):
+#        
+#        result = calc_diff_core(list_pointcloud_filtered[i], args)
+#        results.append(result)
+#        
+#        if i%20==0:
+#            print(i, len(list_pointcloud_filtered))
 
     list_shift_value = []
     dict_shift_value = dict()
     list_shift_img = dict()
 
-    for fn, shift_value, shift_img in result:
+    for fn, shift_value, shift_img in results:
+        
         list_shift_value.append(shift_value)
         list_shift_img[fn] = shift_img
         dict_shift_value[fn] = shift_value
 
-    del result 
+    del results
 
     return list_shift_value, list_shift_img, dict_shift_value
 
+def calc_diff_tqdm(list_pointcloud_filtered, args):       
+    
+    from tqdm import tqdm
 
+    list_shift_value = []
+    dict_shift_value = dict()
+    list_shift_img = dict()
+    
+    for fn in tqdm(list_pointcloud_filtered):
+        fn, shift_value, shift_img = calc_diff_core(fn, args)
+        list_shift_value.append(shift_value)
+        list_shift_img[fn] = shift_img
+        dict_shift_value[fn] = shift_value
+
+    return list_shift_value, list_shift_img, dict_shift_value
 
 ####################################################################################
 
-
-
-
-
-
-
+from lib.tool import read_ascii_xyz
 
 def grid_difference(fn_ref, res_ref, data_mms, nonvalue, raster_size):
 

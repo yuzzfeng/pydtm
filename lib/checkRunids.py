@@ -47,10 +47,10 @@ def full2cell(full):
 def full2cellrunid(full):
     return full.split('\\')[-1]
 
-# Check path exist otherwise creat new
-def check_and_create(out_dir):
-    if os.path.isdir(out_dir) == False:
-        os.mkdir(out_dir)
+## Check path exist otherwise creat new
+#def check_and_create(out_dir):
+#    if os.path.isdir(out_dir) == False:
+#        os.mkdir(out_dir)
 
 def list_runid_read_both_scanner(l):
 
