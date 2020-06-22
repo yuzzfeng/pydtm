@@ -35,7 +35,7 @@ from itertools import product
 
 from environmentSetting import *
 
-from lib.checkRunids import check_and_create
+from lib.util import check_and_create
 from lib.diff import calc_diff, calc_diff_core
 from lib.report import generate_report, plot_img
 from lib.update import update_dtm
@@ -43,17 +43,18 @@ from lib.produceDTM import local_to_UTM, local_to_UTM_update_ref, local_to_UTM_r
 
 if __name__ == "__main__":
     
-    is_calc = False
+    is_calc = True
     
-    list_pointcloud_ref = [fn for fn in os.listdir(ref_out_dir) if '.ply' in fn] 
+    list_pointcloud_ref = [fn for fn in os.listdir(ref_dir) if '.ply' in fn] 
     
-    # Many of the gf files are processed
-    if len(os.listdir(ground_filtering_adp_out_dir)) > len(os.listdir(ground_filtering_out_dir))*2/3:
-        list_pointcloud_filtered = os.listdir(ground_filtering_adp_out_dir)
-        mms_dir = ground_filtering_adp_out_dir
-    else:
-        list_pointcloud_filtered = os.listdir(ground_filtering_out_dir)
-        mms_dir = ground_filtering_out_dir
+#    # Many of the gf files are processed
+#    if len(os.listdir(ground_filtering_adp_out_dir)) > len(os.listdir(gfilter_out_dir))*2/3:
+#        list_pointcloud_filtered = os.listdir(ground_filtering_adp_out_dir)
+#        mms_dir = ground_filtering_adp_out_dir
+#    else:
+    if 1:
+        list_pointcloud_filtered = os.listdir(gfilter_out_dir)
+        mms_dir = gfilter_out_dir
         
     #args = mms_dir, ref_out_dir, res_ref, r
     args = mms_dir, ref_dir, res_ref, r, x_offset, y_offset, geoid, sigma_geoid
@@ -103,14 +104,14 @@ if __name__ == "__main__":
     
 if 0:    
     update_dtm(list_shift_img, raster_size, radius, ref_cut_dir, ref_update_dir,
-               shift, res_ref, list_pointcloud_ref, ref_out_dir)
+               shift, res_ref, list_pointcloud_ref, ref_dir)
     print 'updates generated'
 
-if 0:   
+   
     #shift = 42.9317700613 # Hannover - 42.9316920581
-    shift = 43.5341477257 # Hildesheim - After reject outlier 
+    #shift = 43.5341477257 # Hildesheim - After reject outlier 
     #shift = 43.5346042674 # Hildesheim - Before reject outlier 
-
+    shift = 43.4262356488 # SEhi 
     # Process the mms and update of ref together 
     local_to_UTM(mms_dir, dict_shift_value.keys(), geo_ground_filtering_out_dir, 
                  ref_cut_dir, shift, r, x_offset, y_offset)
@@ -120,6 +121,6 @@ if 0:
 
     # Process the rest of tiles into UTM32 global coordinate system
     list_rest = list(set(list_pointcloud_ref) - set(os.listdir(final_dir)) - set(os.listdir(geo_ground_filtering_out_dir)))
-    local_to_UTM_rest_ref(list_rest, ref_out_dir, rest_dir, r, x_offset, y_offset)
+    local_to_UTM_rest_ref(list_rest, ref_dir, rest_dir, r, x_offset, y_offset)
         
     print 'Process finished'

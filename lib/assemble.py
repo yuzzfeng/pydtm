@@ -6,7 +6,8 @@ from read import rasterize, read_ascii_xyz
 from tool import mergecloud, read_ply
 
 from cell2world import read_cellname, coord_fn_from_cell_index
-from checkRunids import check_and_create
+#from checkRunids import check_and_create
+from util import check_and_create
 
 #from cell2world import read_fn, runid_size, max_runid_range
 #from checkRunids import list_runid_read_both_scanner
@@ -26,7 +27,7 @@ def split_ref_to_tiles(ref_path, ref_out_dir, r, x_offset, y_offset, res_ref):
 
     check_and_create(ref_out_dir)
     list_ref_ply = os.listdir(ref_path)
-    
+    print("Loading")
     num_point_per_kacheln = int(pow(r/res_ref, 2))
     imcomplete = []
     
@@ -50,7 +51,7 @@ def split_ref_to_tiles(ref_path, ref_out_dir, r, x_offset, y_offset, res_ref):
 
             del subdata
         del data, d
-    
+    print("Load finished")
     list_ref_tiles = os.listdir(ref_out_dir)
     removed = []
     

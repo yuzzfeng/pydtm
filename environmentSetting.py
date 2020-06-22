@@ -21,8 +21,9 @@ the file name contains coordinates in global coordinate system.
 
 '''
 
-project_name = 'Hannover'
-project_name = '20190924_Hildesheim'
+##project_name = 'Hannover'
+##project_name = '20190924_Hildesheim'
+project_name = '20200616_DTM_SEHi'
 
 # Temp file for saving height changes
 tmp_dir = "tmp/" + project_name + '/'
@@ -32,22 +33,26 @@ tmp_dir = "tmp/" + project_name + '/'
 #out_path = 'C:\\temp\\DTM_20180416\\'
 #out_path = 'C:\\temp\\DTM_20190711\\'
 #out_path = 'C:\\temp\\DTM_Hildesheim_20190923\\'
-out_path = 'D:\\_data\\_mms\\20200325Hildesheim\\'
+#out_path = 'D:\\_data\\_mms\\20200325Hildesheim\\'
+out_path = 'D:\\temp\\20200616_DTM_SEHi\\'
 
 ### Lidar Points Path
 ##pointcloud_path = 'X:\\Proc\\ricklingen_yu\\map\\'
 ##pointcloud_path = 'X:\\Proc\\ricklingen_yu\\map_bauarbeit\\'
 ##pointcloud_path = 'X:\\Products\\ricklingen_adjusted_cloud_40m_ply\\'
 ##pointcloud_path = 'X:\\Products\\20190919_hildesheim_adjustment\\adjusted_cloud_ply\\'
-pts_dir = "D:/_data/_mms/adjusted_cloud_ply/" # Feng-PC
+##pts_dir = "D:/_data/_mms/adjusted_cloud_ply/" # Feng-PC
+pts_dir = "X:/Products/20200117_hildesheim3/adjusted_cloud_15_ply/"
 
 ## Reference Points path
 ##ref_path = 'C:\\_EVUS_DGM\\DEM_2009_UTM_Zone_32_Ricklingen\\DEM_ply\\1in4\\'
-ref_path = 'D:\\_data\\_airborne_laser_scanning\\20190924_DTM_Hildesheim\\ply\\'
+##ref_path = 'D:\\_data\\_airborne_laser_scanning\\20190924_DTM_Hildesheim\\ply\\'
+ref_path = 'D:\\_data\\_airborne_laser_scanning\\20200616_DTM_SEHi\\ply\\'
 # Path for intermediat results
 ref_dir = out_path + 'ref\\'
 
-ref_dir = "D:/_data/_dgm/reference/" # Feng-PC
+## Feng-PC
+##ref_dir = "D:/_data/_dgm/reference/" # Feng-PC
 
 
 # tmp foldersfor intermediat result
@@ -81,14 +86,19 @@ res_ref = 0.5
 tolerance_up = 3
 tolerance_down = 0.5
 
-# General geoid height in that area as a prior, http://geographiclib.sourceforge.net/cgi-bin/GeoidEval
+# General geoid height in that area as a prior, 
+# Reference: http://geographiclib.sourceforge.net/cgi-bin/GeoidEval
 
 ## Hannover 52.348816 9.725389
 #geoid = 42.9664
 #sigma_geoid = 0.4
 
-# Hildesheim  52.144409 9.95422
-geoid = 43.7786
+## Hildesheim  52.144409 9.95422
+#geoid = 43.7786
+#sigma_geoid = 0.4
+
+# Hildesheim SEHi 52.179003, 9.926203
+geoid = 43.6318
 sigma_geoid = 0.4
 
 # Ground filtering parameters

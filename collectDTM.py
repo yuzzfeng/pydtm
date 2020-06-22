@@ -22,9 +22,11 @@ listC = os.listdir(pathC)
 #fns_dtm = ['ffffff9', 'ffffffa', 'ffffffb', 'ffffffc', 'ffffffd', 'ffffffe', 'fffffff', 
 #           '0000000', '0000001', '0000002', '0000003', '0000004', '0000005', '0000006']
 
-fns_dtm = ['ffffffe', 'fffffff', 
-           '0000000', '0000001', '0000002', '0000003', '0000004', '0000005', '0000006']
+#fns_dtm = ['ffffffe', 'fffffff', 
+#           '0000000', '0000001', '0000002', '0000003', '0000004', '0000005', '0000006']
 
+fns_dtm = ['ffffffc', 'ffffffd', 'ffffffe']
+           
 for fn_dtm in fns_dtm:
     
     print(fn_dtm)

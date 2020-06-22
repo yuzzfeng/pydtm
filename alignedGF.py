@@ -6,7 +6,7 @@ import numpy as np
 from environmentSetting import *
 
 from lib.cell2world import coord
-from lib.checkRunids import check_and_create
+from lib.util import check_and_create
 from lib.reference import filter_by_reference
 from lib.ground_filtering import ground_filter
 from lib.util import global2local, local2global
@@ -37,7 +37,7 @@ def ground_filter_aligned_data(fn, args):
     if len(reduced) < 200:
         return False
 
-    write_points_double(local2global(reduced, mm, nn), 
+    write_points_double(local2global(reduced, mm, nn)[:,:3], 
                         out_dir + fn)
     return True
 
@@ -76,11 +76,17 @@ if __name__ == "__main__":
     list_tiles = sorted(set(list_pointcloud) - set(os.listdir(gfilter_out_dir)))
     print("Number of tiles still need filtering:", len(list_tiles))
 
-    # Process all with 6 cores
-    random.shuffle(list_tiles) 
-    result = ground_filter_multicore(list_tiles, args)
-    print('process finished', sum(result), '/', len(result))
+    ## Process all with 6 cores
+    #random.shuffle(list_tiles) 
+    #result = ground_filter_multicore(list_tiles, args)
+    #print('process finished', sum(result), '/', len(result))
     
+    from tqdm import tqdm    
+    result = []
+    for fn in tqdm(list_pointcloud):
+        r = ground_filter_aligned_data(fn, args)
+        result.append(r)
+    print('process finished', sum(result), '/', len(result))
     
     ## Rickling bugs
     #list_pointcloud = ['00000017_fffffebc.ply', '00000018_fffffeac.ply']
