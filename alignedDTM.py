@@ -111,7 +111,7 @@ if 0:
     #shift = 42.9317700613 # Hannover - 42.9316920581
     #shift = 43.5341477257 # Hildesheim - After reject outlier 
     #shift = 43.5346042674 # Hildesheim - Before reject outlier 
-    shift = 43.4262356488 # SEhi 
+    #shift = 43.4262356488 # SEhi 
     # Process the mms and update of ref together 
     local_to_UTM(mms_dir, dict_shift_value.keys(), geo_ground_filtering_out_dir, 
                  ref_cut_dir, shift, r, x_offset, y_offset)

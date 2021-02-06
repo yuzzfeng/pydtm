@@ -9,7 +9,7 @@ from read import rasterize
 ########################################################################################
 def ground_filter(data_mms, radius, res_list, r, 
                   cleaning=[1.0, 0.5, 0.25, 0.1, 0.05], is_plot = False):
-
+               
     save_img = None
     
     for res in res_list:
@@ -27,15 +27,20 @@ def ground_filter(data_mms, radius, res_list, r,
         if res == 0.1:
             save_img = img
         
-        if res in cleaning: #[1.0, 0.5, 0.25, 0.1, 0.05]: #[0.25, 0.1]: 0.05 is necessary for reflection case
+        if res in cleaning: #[0.25, 0.1]: 0.05 is necessary for reflection case
             d_mms1 = remove_isolated_seg(img, d_mms1, is_plot = is_plot)      
         
-        indexs_res, new_data = update_points(data_mms, d_mms1, img, threshold, res, radius, r)
+        indexs_res, new_data = update_points(data_mms, d_mms1, img, threshold, 
+                                             res, radius, r, is_plot = is_plot)
 
         reduced = data_mms[indexs_res] 
         data_mms = data_mms[new_data]
-
-    return reduced, save_img
+    
+    indexs_res = down_sampling(data_mms, d_mms1, 0.02, r)
+    reduced = data_mms[indexs_res] 
+    
+    #return data_mms, save_img
+    return reduced, save_img #default
 
 
 def check_sparsity(d_mms1):
@@ -98,7 +103,7 @@ def read_points_to_image(data_mms, d_mms, res, r):
             print(x,y, int(r/res))
             continue
 
-        if len(data) > 2:
+        if len(data) > 2: #and res <= 0.5: # Very big cells do not need this step
             conf_int = stats.norm.interval(0.99, loc=np.median(data), scale=np.std(data))
             rest_ind = np.where((data >conf_int[0]) * (data <conf_int[1]))[0]
 
@@ -145,14 +150,32 @@ def neigh_filter(img, threshold_height_difference, radius, threshold_neighbour_c
 
 ###################################################################################
 ## Use absolute height to filter the points
+def down_sampling(data_mms, d_mms1, res, r):
+    
+    d_mms1 = rasterize(data_mms, res, dim = 2)
+    
+    img, d_mms1 = read_points_to_image(data_mms, d_mms1, res, r)
+    
+    indexs_low_res = []    
+    
+    for key in list(set(d_mms1.keys())):
+        i, j = [int(k) for k in key.split('+')]
+        
+        if i == int(r/res) or j == int(r/res): # Ignore the out of bound data
+            print(i, j, int(r/res))
+            continue
+
+        index_res = d_mms1[key][np.argmin(data_mms[d_mms1[key],2])]
+        indexs_low_res.append(index_res)
+    
+    return indexs_low_res
 
 # Update the point cloud using threshold
-def update_points(data_mms, d_mms1, img, threshold, res, radius, r):
+def update_points(data_mms, d_mms1, img, threshold, res, radius, r, is_plot = False):
     
     data_mms = data_mms[:,:3]
     
     mask =neigh_filter(img, 2*res/3, radius, 48)
-##    mask =neigh_filter(img, 2*res/3, radius, 48)
 ##    mask =neigh_filter(img, res, radius, 48)
     
     index2d = np.array(np.where(mask == True)).T
@@ -172,17 +195,17 @@ def update_points(data_mms, d_mms1, img, threshold, res, radius, r):
         index_res = d_mms1[key][np.argmin(data_mms[d_mms1[key],2])]
         indexs_low_res.append(index_res)
 
-        index = (data_mms[d_mms1[key],2] >= img[i,j]) * (data_mms[d_mms1[key],2] < img[i,j] + threshold)  
+        index = (data_mms[d_mms1[key],2] >= img[i,j] - threshold) * (data_mms[d_mms1[key],2] < img[i,j] + threshold)  
         indexs_new_data.extend(list(np.array(d_mms1[key])[index]))
-
-##    plt.figure()
-##    imgplot = plt.imshow(img)
-##    plt.colorbar()
-##    plt.figure()
-##    imgplot = plt.imshow(mask)
-##    plt.colorbar()
-##    plt.show()
-
+    
+    if is_plot:
+        plt.figure()
+        plt.imshow(img)
+        plt.colorbar()
+        plt.show()
+    
+    print('mask', np.sum(mask))    
+    
     return indexs_low_res, indexs_new_data
 
 
@@ -244,18 +267,6 @@ def update_points(data_mms, d_mms1, img, threshold, res, radius, r):
 ###            
 ###            index = (data_mms[d_mms1[key],2] >= img[i,j]) * (data_mms[d_mms1[key],2] < img[i,j] + threshold)
 ###            indexs_new_data.extend(list(np.array(d_mms1[key])[index]))
-#
-#
-#    plt.figure()
-#    imgplot = plt.imshow(img)
-#    plt.colorbar()
-#    plt.figure()
-#    imgplot = plt.imshow(mask)
-#    plt.colorbar()
-#    plt.figure()
-#    imgplot = plt.imshow(N[:,:,2])
-#    plt.colorbar()
-#    plt.show()
 #
 #    return indexs_low_res, indexs_new_data
 #

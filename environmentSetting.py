@@ -23,7 +23,8 @@ the file name contains coordinates in global coordinate system.
 
 ##project_name = 'Hannover'
 ##project_name = '20190924_Hildesheim'
-project_name = '20200616_DTM_SEHi'
+##project_name = '20200616_DTM_SEHi'
+project_name = '20201022_Hildesheim'
 
 # Temp file for saving height changes
 tmp_dir = "tmp/" + project_name + '/'
@@ -34,20 +35,22 @@ tmp_dir = "tmp/" + project_name + '/'
 #out_path = 'C:\\temp\\DTM_20190711\\'
 #out_path = 'C:\\temp\\DTM_Hildesheim_20190923\\'
 #out_path = 'D:\\_data\\_mms\\20200325Hildesheim\\'
-out_path = 'D:\\temp\\20200616_DTM_SEHi\\'
+#out_path = 'D:\\temp\\20200616_DTM_SEHi\\'
+out_path = 'D:\\temp\\20201022_DTM_Hildesheim\\'
+
 
 ### Lidar Points Path
 ##pointcloud_path = 'X:\\Proc\\ricklingen_yu\\map\\'
 ##pointcloud_path = 'X:\\Proc\\ricklingen_yu\\map_bauarbeit\\'
 ##pointcloud_path = 'X:\\Products\\ricklingen_adjusted_cloud_40m_ply\\'
-##pointcloud_path = 'X:\\Products\\20190919_hildesheim_adjustment\\adjusted_cloud_ply\\'
+pts_dir = 'X:\\Products\\20190919_hildesheim_adjustment\\adjusted_cloud_ply\\'
 ##pts_dir = "D:/_data/_mms/adjusted_cloud_ply/" # Feng-PC
-pts_dir = "X:/Products/20200117_hildesheim3/adjusted_cloud_15_ply/"
+##pts_dir = "X:/Products/20200117_hildesheim3/adjusted_cloud_15_ply/"
 
 ## Reference Points path
 ##ref_path = 'C:\\_EVUS_DGM\\DEM_2009_UTM_Zone_32_Ricklingen\\DEM_ply\\1in4\\'
-##ref_path = 'D:\\_data\\_airborne_laser_scanning\\20190924_DTM_Hildesheim\\ply\\'
-ref_path = 'D:\\_data\\_airborne_laser_scanning\\20200616_DTM_SEHi\\ply\\'
+ref_path = 'D:\\_data\\_airborne_laser_scanning\\20190924_DTM_Hildesheim\\ply\\'
+##ref_path = 'D:\\_data\\_airborne_laser_scanning\\20200616_DTM_SEHi\\ply\\'
 # Path for intermediat results
 ref_dir = out_path + 'ref\\'
 
@@ -94,16 +97,16 @@ tolerance_down = 0.5
 #sigma_geoid = 0.4
 
 ## Hildesheim  52.144409 9.95422
-#geoid = 43.7786
-#sigma_geoid = 0.4
+geoid = 43.7786
+sigma_geoid = 0.4
 
 # Hildesheim SEHi 52.179003, 9.926203
-geoid = 43.6318
-sigma_geoid = 0.4
+#geoid = 43.6318
+#sigma_geoid = 0.4
 
 # Ground filtering parameters
 radius = 3
-res_list = [1.0, 0.5, 0.25, 0.1, 0.05]
+res_list = [1.0, 0.5, 0.25, 0.1, 0.05] 
 
 # Update parameter
 #shift = 42.9317864988 # Hanvnoer
