@@ -85,7 +85,7 @@ def read_from_json(jsonfn):
             dShift = json.load(fp)
     else:
         dShift = dict()
-        print 'No shift data'
+        print ('No shift data')
 
     return dShift
 
@@ -101,7 +101,7 @@ def select_from_shifts(dShift, reject_threshold):
         shifts = dShift
 
     shift_value = np.mean(shifts)
-    print shift_value, np.std(shifts), len(shifts), len(dShift)
+    print (shift_value, np.std(shifts), len(shifts), len(dShift))
 
     return shift_value
 

@@ -1,9 +1,8 @@
 import numpy as np
+from tqdm import tqdm
 from scipy import interpolate
 from itertools import product
 import matplotlib.pyplot as plt
-
-from lib.read import rasterize
 
 def check_update_necessity(neigh_list, dict_shifts):
     # Check if update is necessary
@@ -89,18 +88,48 @@ def generate_updates_mms(dict_shifts, neigh_list, r, res_update,
     return data_update, z
 
 
-def update_pointcloud(data_mms, data_update, res_update):
+def gen_updates4mms(list_fns, dict_shift_value, r, res_update, shift):
     
-    # Create index according to updates resolution
-    d_update = rasterize(data_update, res_update, dim = 2)        
-    d_mms_runid = rasterize(data_mms, res_update, dim = 2)
+    from lib.neighbour import search_neigh_tiles
     
-    # Apply change for each cell regarding updates resolution
-    data_updated = []
-    for key, value in d_mms_runid.iteritems():
-        sub_mms = data_mms[value]
-        if key in d_update:
-            update_value = data_update[d_update[key][0],2]
-            sub_mms[:,:3] = sub_mms[:,:3] - [0,0,update_value]
-            data_updated.extend(sub_mms) # Must be minus here
-    return np.array(data_updated) 
+    # Tile Size in meter
+    size = int(r/res_update)
+    
+    # Container of upadte images
+    dict_update_img = dict()
+    
+    # Container of upadte points
+    dict_update_pts = dict()
+    
+    # Collect updates by bilinear intepolation
+    for fn in tqdm(list_fns):
+        
+        # 9 Neighbour tiles
+        neigh_list = search_neigh_tiles(fn)
+        data_update, z = generate_updates_mms(dict_shift_value, neigh_list, 
+                                              r, res_update, shift)
+        # Save image
+        if type(data_update)!=type(None):
+            update_img = data_update[:,2].reshape(size,size) 
+            dict_update_img[fn] = update_img
+            dict_update_pts[fn] = data_update
+
+    return dict_update_img, dict_update_pts
+
+
+# Remove because for runids
+#def update_pointcloud(data_mms, data_update, res_update):
+#    
+#    # Create index according to updates resolution
+#    d_update = rasterize(data_update, res_update, dim = 2)        
+#    d_mms_runid = rasterize(data_mms, res_update, dim = 2)
+#    
+#    # Apply change for each cell regarding updates resolution
+#    data_updated = []
+#    for key, value in d_mms_runid.iteritems():
+#        sub_mms = data_mms[value]
+#        if key in d_update:
+#            update_value = data_update[d_update[key][0],2]
+#            sub_mms[:,:3] = sub_mms[:,:3] - [0,0,update_value]
+#            data_updated.extend(sub_mms) # Must be minus here
+#    return np.array(data_updated) 

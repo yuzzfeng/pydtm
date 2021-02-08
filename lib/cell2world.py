@@ -2,7 +2,7 @@ import struct
 import numpy as np
 from itertools import product
 
-from asc import read_asc
+#from asc import read_asc
 
 #######################################################################
 # From the local to global coordinates system

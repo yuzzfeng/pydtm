@@ -51,7 +51,7 @@ def plot_tiles_hdiff(dict_values, args):
     from matplotlib.patches import Rectangle
     
     fns = dict_values.keys()
-    _, _, _, _, r, x_offset, y_offset, _, _, _, _ = args
+    r, x_offset, y_offset = args
     
     # Get origin from initial filename
     m,n = fns[0][:17].split('_')

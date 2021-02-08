@@ -112,7 +112,7 @@ def generate_report(list_shift_value, list_shift_img, dict_shift_value, out_path
         text_file.write("min: %s \n" % np.min(list_shift_value[ind] - shift))
 
     plt.show()
-    print shift, np.std(list_shift_value[ind] - shift)
-    print np.max(list_shift_value[ind] - shift), np.min(list_shift_value[ind] - shift)
+    print (shift, np.std(list_shift_value[ind] - shift))
+    print (np.max(list_shift_value[ind] - shift), np.min(list_shift_value[ind] - shift))
     
     return shift
