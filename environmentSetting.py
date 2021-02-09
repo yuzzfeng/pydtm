@@ -8,7 +8,7 @@
 '''
 Environment Parameters Setting - pydtm
 
-Define the path of input lidar data and input reference data
+Define the path of input lidar data and input reference data.
 
 With an given refence data such as a 2D Grid/Image, tranform it firstly to 3D point cloud, e.g. using ArcGIS.
 If it is a large area, please partition to small. Then save under reference path and name them such as:
@@ -21,6 +21,7 @@ the file name contains coordinates in global coordinate system.
 
 '''
 
+""" Variables """
 ##project_name = 'Hannover'
 ##project_name = '20190924_Hildesheim'
 ##project_name = '20200616_DTM_SEHi'
@@ -30,9 +31,7 @@ project_name = '20201022_Hildesheim'
 tmp_dir = "tmp/" + project_name + '/'
 
 # Output Path
-#out_path = 'C:\\temp\\DTM_04042018\\'
-#out_path = 'C:\\temp\\DTM_20180416\\'
-#out_path = 'C:\\temp\\DTM_20190711\\'
+#out_path = 'C:\\temp\\DTM_20190711\\' # Ricklingen
 #out_path = 'C:\\temp\\DTM_Hildesheim_20190923\\'
 #out_path = 'D:\\_data\\_mms\\20200325Hildesheim\\'
 #out_path = 'D:\\temp\\20200616_DTM_SEHi\\'
@@ -57,7 +56,7 @@ ref_dir = out_path + 'ref\\'
 ## Feng-PC
 ##ref_dir = "D:/_data/_dgm/reference/" # Feng-PC
 
-
+""" Constants """
 # tmp foldersfor intermediat result
 gfilter_out_dir = out_path + 'aligned_GF\\'
 correct_out_dir = out_path + 'aligned_Corr\\'
@@ -71,6 +70,9 @@ geo_ground_filtering_out_dir = out_path + 'aligned_a\\'
 final_dir = out_path + 'aligned_b\\'
 rest_dir = out_path + 'aligned_c\\'
 
+
+
+""" Variables """
 # Glabal original in the meter coordinate system, e.g. UTM 32 Zone, as well as grid size
 
 ## Hannover Ricklingen
@@ -82,12 +84,6 @@ rest_dir = out_path + 'aligned_c\\'
 x_offset = 564546
 y_offset = 5778458
 r = 25
-
-# Resolusion of the reference DTM grids
-res_ref = 0.5
-
-tolerance_up = 3
-tolerance_down = 0.5
 
 # General geoid height in that area as a prior, 
 # Reference: http://geographiclib.sourceforge.net/cgi-bin/GeoidEval
@@ -104,14 +100,24 @@ sigma_geoid = 0.4
 #geoid = 43.6318
 #sigma_geoid = 0.4
 
-# Ground filtering parameters
-radius = 3
-res_list = [1.0, 0.5, 0.25, 0.1, 0.05] 
-
 # Update parameter
 #shift = 42.9317864988 # Hanvnoer
 #shift = 43.5346042674 # hildesheim
 
+
+""" Constants """
+# Resolusion of the reference DTM grids
+res_ref = 0.5
+
+tolerance_up = 3
+tolerance_down = 0.5
+
+# Ground filtering parameters
+radius = 3
+res_list = [1.0, 0.5, 0.25, 0.1, 0.05] 
+
+# Generated updates
 res_update = 0.1
 
+# Constant for non value for images
 nonvalue = -999.0

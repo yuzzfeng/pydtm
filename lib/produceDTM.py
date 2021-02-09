@@ -26,7 +26,7 @@ def local_to_UTM_core(fn, args):
     m,n = fn[:17].split('_')
     [mm,nn] = coord(m, n, r, x_offset, y_offset)
     
-    args = mms_dir, 0, 0, r, x_offset, y_offset, 0, 0
+    args = mms_dir, 0, 0, r, x_offset, y_offset
     
     #data = read_bin(mms_dir + fn, 7)
     data = load_mms(fn, args)

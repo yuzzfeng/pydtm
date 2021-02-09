@@ -8,7 +8,7 @@ from tqdm import tqdm
 from lib.read import rasterize
 from lib.cell2world import coord
 from lib.util import global2local, local2global
-from lib.ply import read_bin_xyzrid_scale, write_points_double
+from lib.ply import read_bin_xyzrid_scale, read_bin_double, read_bin_xyz_scale, write_points_double
 
 # Issue due to points at borders - remove the cell from indexes
 def remove_border_pts(d_mms, res_update, r):
@@ -27,6 +27,7 @@ def remove_border_pts(d_mms, res_update, r):
 
     return d_mms
 
+# Apply height updates on single mms file
 def apply_height_updates(data_mms, data_updates, res_update, r, global_shift = 0):
     
     # Indexing
@@ -47,8 +48,31 @@ def apply_height_updates(data_mms, data_updates, res_update, r, global_shift = 0
         
     return np.array(data_updated)  
 
+
+def load_corr_mms(fn, mms_dir, args):
+    
+    r, x_offset, y_offset = args
+    
+    # Get origin from filename
+    m,n = fn[:17].split('_')
+    [mm,nn] = coord(m, n, r, x_offset, y_offset)
+        
+    # Load points
+    try: # Some of are ddd, and some are ddfi
+        data_mms = read_bin_double(mms_dir + fn, 7)
+    except:
+        data_mms = read_bin_xyz_scale(mms_dir + fn, 8)
+        data_mms = data_mms[:,:3]
+        print('Changed loaded...', fn)
+    
+    # Trans to local system
+    data_mms = global2local(data_mms, mm, nn)
+    return data_mms
+
+
+# Apply height updates on mms files in a folder
 def apply_height_updates_folder(list_pts, pts_dir, dict_update_pts, res_ref, res_update,  
-                                out_dir, args, global_shift = 0):
+                                out_dir, args, global_shift = 0, is_xyz = False):
 
     r, x_offset, y_offset = args
     
@@ -61,10 +85,14 @@ def apply_height_updates_folder(list_pts, pts_dir, dict_update_pts, res_ref, res
         data_updates = dict_update_pts[fn]
 
         # Load mms original points
-        data_mms = read_bin_xyzrid_scale(pts_dir + fn, 12)
+        if is_xyz:
+            data_mms = load_corr_mms(fn, pts_dir, args)
         
-        # Trans to local system
-        data_mms = global2local(data_mms, mm, nn)
+        else:
+            data_mms = read_bin_xyzrid_scale(pts_dir + fn, 12)
+        
+            # Trans to local system
+            data_mms = global2local(data_mms, mm, nn)
         
         data_updated = apply_height_updates(data_mms, data_updates, res_update, r, global_shift)
         

@@ -15,7 +15,8 @@ from lib.load import load_mms
 
 def calc_diff_core(fn, args):
     
-    mms_dir, ref_dir, res_ref, r, x_offset, y_offset, geoid, sigma_geoid  = args
+    #mms_dir, ref_dir, res_ref, r, x_offset, y_offset, geoid, sigma_geoid  = args
+    mms_dir, ref_dir, res_ref, r, x_offset, y_offset  = args
     
     data_mms = load_mms(fn, args)
     #data_mms = read_bin(mms_dir + fn, 7)

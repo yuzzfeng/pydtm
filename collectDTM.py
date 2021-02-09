@@ -11,7 +11,7 @@ from lib.ply import write_points, write_points_double, read_bin, read_bin_double
 out_dtm_dir = out_path + 'finalout_all\\'
 check_and_create(out_dtm_dir)
 
-pathA = geo_ground_filtering_out_dir
+pathA = merged_dir
 pathB = final_dir
 pathC = rest_dir
 
@@ -22,10 +22,10 @@ listC = os.listdir(pathC)
 #fns_dtm = ['ffffff9', 'ffffffa', 'ffffffb', 'ffffffc', 'ffffffd', 'ffffffe', 'fffffff', 
 #           '0000000', '0000001', '0000002', '0000003', '0000004', '0000005', '0000006']
 
-#fns_dtm = ['ffffffe', 'fffffff', 
-#           '0000000', '0000001', '0000002', '0000003', '0000004', '0000005', '0000006']
+fns_dtm = ['ffffffe', 'fffffff', 
+           '0000000', '0000001', '0000002', '0000003', '0000004', '0000005', '0000006']
 
-fns_dtm = ['ffffffc', 'ffffffd', 'ffffffe']
+#fns_dtm = ['ffffffc', 'ffffffd', 'ffffffe']
            
 for fn_dtm in fns_dtm:
     

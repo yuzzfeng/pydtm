@@ -1,4 +1,4 @@
-# ENHANCING THE RESOLUTION OF URBAN DIGITAL TERRAIN MODELS USING MOBILE MAPPING SYSTEMS
+# Enhancing the Resolution of Urban Digital Terrain Models Using Mobile Mapping Systems
 
 ![](https://github.com/fy19891009/pydtm/blob/master/img/DTM.PNG)
 

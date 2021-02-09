@@ -7,7 +7,8 @@ from lib.util import global2local
 
 def load_mms(fn, args):
     
-    mms_dir, _, _, r, x_offset, y_offset, _, _ = args
+    #mms_dir, ref_dir, res_ref, r, x_offset, y_offset, geoid, sigma_geoid  = args
+    mms_dir, _, _, r, x_offset, y_offset = args
     
     # Get origin from filename
     m,n = fn[:17].split('_')

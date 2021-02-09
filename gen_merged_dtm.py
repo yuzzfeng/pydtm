@@ -1,11 +1,10 @@
 import os
-import struct
-
 import numpy as np
-import matplotlib.pyplot as plt
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
-from environmentSetting import *
+from environmentSetting import res_ref, r, x_offset, y_offset
+from environmentSetting import tmp_dir, project_name, res_update
 from lib.neighbour import search_neigh_tiles, get_distance_without_padding
 
 from lib.draw import plot_tiles_hdiff
@@ -111,41 +110,46 @@ def shifts_cleaning(dict_shift_value, list_mms, args):
     
     return dict_shift_value
 
-
-
-
-shift = 43.53326697865561 # Report0
-shift = 43.5341477257 # Hildesheim - After reject outlier 
-
-pts_dir = "D:/_data/_mms/adjusted_cloud_ply/"
-ref_dir = "D:/_data/_dgm/reference/"
-out_path = 'D:/_data/_mms/20200325Hildesheim/'
-gfilter_out_dir = out_path + 'aligned_GF/'
-final_dir = out_path + 'aligned_b/'
-
-out_dir = out_path + 'aligned_MMS/'
-
-mms_dir = gfilter_out_dir
-list_mms = os.listdir(mms_dir)
-list_pts = os.listdir(pts_dir)
-
-
-if 1:
-
-    shifts_dict_dir = "D:/ikgsvn/pydtm/tmp/20190924_Hildesheim/"
-        
-    from lib.diff import calc_diff_tqdm
-        
-    gfilter_dir = gfilter_out_dir
-    list_pointcloud_filtered = os.listdir(gfilter_dir)
-    mms_dir = gfilter_dir
+def find_nans_in_dict(dict_shift_value, list_shift_img):
+    # Find the invalid tiles
+    invalid = []
+    for key,value in dict_shift_value.iteritems():
+        if not value:
+            invalid.append(key)
+        else:
+            if np.isnan(value):
+                invalid.append(key)
     
-    if 0: # Generate height difference from data 
+    # Remove the invalid from dictionary
+    for key in invalid:
+        list_shift_img.pop(key)
+        dict_shift_value.pop(key)
+        print('Removed - find_nans_in_dict', key)
         
-        args = mms_dir, ref_dir, res_ref, r, x_offset, y_offset, geoid, sigma_geoid
-        list_shift_value, list_shift_img, dict_shift_value = calc_diff_tqdm(list_pointcloud_filtered, args)
+    return dict_shift_value, list_shift_img
+
+def calc_height_diff_entire(tmp_dir, project_name, mms_dir, ref_dir, is_after_dtm_alignment = False):
+    
+    if is_after_dtm_alignment:
+        project_name = project_name + "_after_"
+    else:
+        project_name = project_name + "_before_"
+
+    # Height difference 
+    if project_name + "_shift.npy" not in os.listdir(tmp_dir): # calculate from data 
+        
+        from lib.diff import calc_diff_tqdm
+        args = mms_dir, ref_dir, res_ref, r, x_offset, y_offset
+        list_shift_value, list_shift_img, dict_shift_value = calc_diff_tqdm(list_mms, args)
         print ('Shifts calculation finished.')
         
+        from lib.report import generate_report
+        dict_shift_value, list_shift_img = find_nans_in_dict(dict_shift_value, list_shift_img)
+        shift = generate_report(list_shift_value, list_shift_img, dict_shift_value, 
+                                out_path + project_name + 'report\\', 
+                                r, x_offset,y_offset, res_ref)
+        print 'report generated'
+    
         # Save the dict for shift values
         np.save(tmp_dir + project_name + "_shift.npy",       [dict_shift_value, 0])   
         np.save(tmp_dir + project_name + "_shift_img.npy",   [list_shift_img, 0])    
@@ -154,9 +158,56 @@ if 1:
     else: # Load existing height difference files
         
         dict_shift_value = np.load(tmp_dir + project_name + "_shift.npy", allow_pickle=True)[0]
-        list_shift_img = np.load(tmp_dir + project_name + "_shift_img.npy", allow_pickle=True)[0]
+        list_shift_img   = np.load(tmp_dir + project_name + "_shift_img.npy", allow_pickle=True)[0]
         list_shift_value = np.load(tmp_dir + project_name + "_shift_value.npy", allow_pickle=True)[0]
+        
+    return dict_shift_value, list_shift_img
+
+if __name__ == "__main__":
     
+    # Global shift due to geoid vs gps datum
+    shift = 43.53326697865561 # Report0
+    shift = 43.5341477257 # Hildesheim - After reject outlier 
+    
+    pts_dir = "D:/_data/_mms/adjusted_cloud_ply/"
+    ref_dir = "D:/_data/_dgm/reference/"
+    out_path = 'D:/_data/_mms/20200325Hildesheim/'
+    gfilter_out_dir = out_path + 'aligned_GF/'
+    correct_out_dir = out_path + 'aligned_Corr/'
+    
+    # Outputs
+    merged_dir = out_path + 'aligned_a/'
+    final_dir = out_path + 'aligned_b/'
+    rest_dir = out_path + 'aligned_c/'
+    gr_utm_dir = out_path + 'aligned_GR/'
+    pts_utm_dir = out_path + 'aligned_MMS/'
+    updates_dir = out_path + 'aligned_update_values/'
+    ref_update_dir = out_path + 'aligned_ref_update/'
+    ref_cut_dir = out_path + 'aligned_ref_update_cut/'
+
+    from lib.util import check_and_create
+    check_and_create(merged_dir)
+    check_and_create(final_dir)
+    check_and_create(rest_dir)
+    check_and_create(gr_utm_dir)
+    check_and_create(pts_utm_dir)
+    check_and_create(updates_dir)
+    check_and_create(ref_update_dir)
+    check_and_create(ref_cut_dir)
+    
+    
+    # If points corrected based on runid exist
+    if os.path.isdir(correct_out_dir) and len(os.listdir(correct_out_dir)) >0 :
+        mms_dir = correct_out_dir
+    else:
+        mms_dir = gfilter_out_dir
+        
+    list_mms = os.listdir(mms_dir)
+    list_pts = os.listdir(pts_dir)
+    
+    # Calculate difference and report
+    dict_shift_value, list_shift_img = calc_height_diff_entire(tmp_dir, project_name, mms_dir, ref_dir, 
+                                                               is_after_dtm_alignment = False)
     
     ## Generate basic mask for data extent - terrain/mms
     from lib.visual_tools import gen_mask4mms
@@ -171,8 +222,9 @@ if 1:
                '00000032_ffffffe7.ply', '0000002e_ffffffe4.ply', '00000010_fffffff5.ply', 
                "00000029_ffffffe2.ply", "00000014_ffffffe2.ply", 'fffffff7_fffffff0.ply',
                'fffffffc_fffffff0.ply', "00000024_ffffffdc.ply", "00000018_ffffffdf.ply", 
+               "0000002a_ffffffe9.ply", "0000002a_ffffffe7.ply"
                ]
-    gen_mask4mms("mask.tiff", checked, (r, x_offset, y_offset))
+    gen_mask4mms("mask.tiff", checked, (r, x_offset, y_offset)) # Draw a mask for the selected tiles
     
     for fn in checked:
         if fn in dict_shift_value:
@@ -191,22 +243,68 @@ if 1:
     from lib.visual_tools import merge_updates4mms
     final_image = merge_updates4mms("test.tiff", dict_update_img, res_update, (r, x_offset, y_offset)) 
     
+    """
     # Update MMS measurements
+    """
     from lib.apply_transform import apply_height_updates_folder
     list_pts =  ["0000001e_ffffffee.ply", "0000001f_ffffffee.ply"] #os.listdir(pts_dir)
     apply_height_updates_folder(list_pts, pts_dir, dict_update_pts, res_ref, res_update, 
-                                out_dir, (r, x_offset, y_offset), shift)
+                                pts_utm_dir, (r, x_offset, y_offset), shift)
+    
+    
+    """
+    # Update MMS ground measurements
+    """
+    from lib.apply_transform import apply_height_updates_folder
+    apply_height_updates_folder(list_mms, mms_dir, dict_update_pts, res_ref, res_update, 
+                                gr_utm_dir, (r, x_offset, y_offset), shift, is_xyz = True)
+    
     
     """    
     # Save updates values to tile ply
+    """
     from lib.cell2world import coord
     from lib.ply import write_points_double
     from lib.util import global2local, local2global
-    out_update_dir = out_path + 'aligned_update_values/'
     for fn, update_values in dict_update_pts.iteritems():
         m,n = fn[:17].split('_')
         [mm,nn] = coord(m, n, r, x_offset, y_offset)
         write_points_double(local2global(update_values[:,:3], mm, nn), 
-                            out_update_dir + '//' + fn)
+                            updates_dir + '//' + fn)
+    
+    
+    # Calculate difference and report
+    dict_shift_value, list_shift_img = calc_height_diff_entire(tmp_dir, project_name, gr_utm_dir, ref_dir, 
+                                                               is_after_dtm_alignment = True)
+    
+    
     """
+    # Proc to final merged dtm
+    """
+    raster_size = r/res_ref #30
+    radius = 1
+    
+    from lib.update import update_dtm
+    from lib.produceDTM import local_to_UTM, local_to_UTM_update_ref, local_to_UTM_rest_ref
+    
+    shift = -0.00017232050548621046 # Hildesheim - Report-after
+    
+    list_pointcloud_ref = [fn for fn in os.listdir(ref_dir) if '.ply' in fn] 
+    
+    update_dtm(list_shift_img, raster_size, radius, ref_cut_dir, ref_update_dir,
+               shift, res_ref, list_pointcloud_ref, ref_dir)
+    print 'updates generated'
+
+    # Process the mms and update of ref together 
+    local_to_UTM(gr_utm_dir, dict_shift_value.keys(), merged_dir, 
+                 ref_cut_dir, shift, r, x_offset, y_offset)
+
+    # Process the update ref and combine the duplicated ones
+    local_to_UTM_update_ref(ref_update_dir, final_dir, r, x_offset, y_offset)
+
+    # Process the rest of tiles into UTM32 global coordinate system
+    list_rest = list(set(list_pointcloud_ref) - set(os.listdir(final_dir)) - set(os.listdir(merged_dir)))
+    local_to_UTM_rest_ref(list_rest, ref_dir, rest_dir, r, x_offset, y_offset)
+        
+    print 'Process finished'
     

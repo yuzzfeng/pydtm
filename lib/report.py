@@ -46,9 +46,8 @@ def generate_diff_image(list_shift_img, M, N, minM, minN,
 
 
 
-def generate_report(list_shift_value, list_shift_img, dict_shift_value, out_path, r, x_offset,y_offset, res_ref):
+def generate_report(list_shift_value, list_shift_img, dict_shift_value, report_path, r, x_offset,y_offset, res_ref):
 
-    report_path = out_path + 'report\\'
     check_and_create(report_path)
 
     ind = reject_outliers(list_shift_value, 20)
