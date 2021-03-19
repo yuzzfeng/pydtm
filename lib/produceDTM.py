@@ -1,3 +1,8 @@
+#######################################################################
+# Combine mms, update ref and rest ref together
+# Author: Yu Feng
+#######################################################################
+
 import os
 import numpy as np
 from tqdm import tqdm
@@ -13,11 +18,6 @@ from ply import write_points_double, read_bin
 from cell2world import coord, read_cellname
 
 from load import load_mms
-#######################################################################
-# Combine mms, update ref and rest ref together
-# Author: Yu Feng
-#######################################################################
-
 
 def local_to_UTM_core(fn, args):
 
@@ -71,6 +71,7 @@ def local_to_UTM_tqdm(in_dir, list_mms, out_dir, update_dir, z_offset, r, x_offs
         result.append(res)
         
     return result
+
 #######################################################################
 
 def local_to_UTM_rest_ref_core(fn, args):
@@ -151,12 +152,6 @@ def local_to_UTM_update_ref(in_dir, out_dir, r, x_offset, y_offset):
 
     args = in_dir, out_dir, r, x_offset, y_offset
 
-#    ## 6 Cores
-#    p = Pool(6)
-#    result = p.map(local_to_UTM_update_ref_star, zip(list_ref_update, repeat(args)))
-#    p.close()
-#    p.join()
-    
     result = []
     for fn in tqdm(list_ref_update):
         res = local_to_UTM_update_ref_core(fn, args)
@@ -165,8 +160,6 @@ def local_to_UTM_update_ref(in_dir, out_dir, r, x_offset, y_offset):
     return result
 
 
-    
-    
 #######################################################################
 
 def final_dtm(path_final, path_mms, path_ref, in_dir_ref):

@@ -38,8 +38,7 @@ Following are the comparision between the DTM with different resolution.
 Preprocessing ALS: merge ALS DEM tiles with raster merge, then gdal2xyz to points
     
     python alignedREF.py
-    python rejectOutliers.py
-    python alignedDTM.py
+    python gen_merged_dtm.py
     python collectDTM.py
 
 ## Citation:

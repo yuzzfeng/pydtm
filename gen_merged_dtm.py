@@ -277,7 +277,6 @@ if __name__ == "__main__":
     dict_shift_value, list_shift_img = calc_height_diff_entire(tmp_dir, project_name, gr_utm_dir, ref_dir, 
                                                                is_after_dtm_alignment = True)
     
-    
     """
     # Proc to final merged dtm
     """
