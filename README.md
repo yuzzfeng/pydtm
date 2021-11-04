@@ -22,15 +22,15 @@ Input of the data should be partitioned into grids based on a global origin and 
 Following are the comparision between the DTM with different resolution.
 
 <div align = 'center'>
-<img src = 'img/Curb_before.PNG' height = '200px'>
-<img src = 'img/Circle_before.PNG' height = '200px'>
-<img src = 'img/bridge_before.PNG' height = '200px'>
-<img src = 'img/Correction_before.PNG' height = '200px'>
+<img src = 'img/Curb_before.PNG' height = '190px'>
+<img src = 'img/Circle_before.PNG' height = '190px'>
+<img src = 'img/bridge_before.PNG' height = '190px'>
+<img src = 'img/Correction_before.PNG' height = '190px'>
 <br>
-<img src = 'img/Curb_after.PNG' height = '200px'>
-<img src = 'img/Circle_after.PNG' height = '200px'>
-<img src = 'img/bridge_after.PNG' height = '200px'>
-<img src = 'img/Correction_after.PNG' height = '200px'>
+<img src = 'img/Curb_after.PNG' height = '190px'>
+<img src = 'img/Circle_after.PNG' height = '190px'>
+<img src = 'img/bridge_after.PNG' height = '190px'>
+<img src = 'img/Correction_after.PNG' height = '190px'>
 </div>
     
 ## Commands
